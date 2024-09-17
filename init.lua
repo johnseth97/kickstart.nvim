@@ -456,10 +456,14 @@ require('lazy').setup({
     end,
   },
 
-  {
+  { -- Terminal Splits
     'akinsho/toggleterm.nvim',
     version = '*',
     config = true,
+  },
+
+  { -- Github Copilot
+    'github/copilot.vim',
   },
 
   -- LSP Plugins
