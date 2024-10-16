@@ -330,7 +330,6 @@ require('lazy').setup({
         },
       },
 
-      -- Document existing key chains
       spec = {
         { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
         { '<leader>d', group = '[D]ocument' },
@@ -910,7 +909,7 @@ require('lazy').setup({
     end,
   },
 
-  { -- You can easily change to a different colorscheme.
+  { -- Colorschemes
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
     --
@@ -948,6 +947,12 @@ require('lazy').setup({
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
+
+      -- Git integration for Neovim, :Git <command>
+      require('mini.git').setup()
+
+      -- Tabline for Neovim
+      require('mini.tabline').setup()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
