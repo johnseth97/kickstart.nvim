@@ -2,7 +2,22 @@
 --
 -- Options
 --
---
+-- Snacks profiler hook, must load before as much of the config as possibe
+-- Otherwise, it won't be able to capture the events
+
+if vim.env.PROF then
+  -- example for lazy.nvim
+  -- change this to the correct path for your plugin manager
+  local snacks = vim.fn.stdpath 'data' .. '/lazy/snacks.nvim'
+  vim.opt.rtp:append(snacks)
+  require('snacks.profiler').startup {
+    startup = {
+      event = 'VimEnter', -- stop profiler on this event. Defaults to `VimEnter`
+      -- event = "UIEnter",
+      -- event = "VeryLazy",
+    },
+  }
+end
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
