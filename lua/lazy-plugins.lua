@@ -221,70 +221,6 @@ require('lazy').setup({
     end,
   },
 
-  { --Nvim Tree
-    'nvim-tree/nvim-tree.lua',
-    version = '*',
-    lazy = false,
-    keys = {
-      { '<leader>e', ':NvimTreeToggle<CR>', { silent = true }, desc = 'File [E]xplorer' },
-    },
-    config = function()
-      require('nvim-tree').setup {}
-    end,
-  },
-
-  { -- Terminal Splits
-    'akinsho/toggleterm.nvim',
-    version = '*',
-    config = true,
-    keys = {
-      { '<leader>T', ':ToggleTerm<CR>', { silent = true }, desc = '[T]oggle terminal' },
-    },
-  },
-
-  { -- Dashboard
-    'nvimdev/dashboard-nvim',
-    event = 'VimEnter',
-    config = function()
-      require('dashboard').setup {
-        theme = 'hyper',
-        config = {
-          week_header = {
-            enable = true,
-          },
-          shortcut = {
-            { desc = '󰊳 Update', group = '@property', action = 'Lazy update', key = 'u' },
-            {
-              icon = ' ',
-              icon_hl = '@variable',
-              desc = 'Files',
-              group = 'Label',
-              action = 'Telescope find_files',
-              key = 'f',
-            },
-            {
-              desc = ' Apps',
-              group = 'DiagnosticHint',
-              action = 'Telescope app',
-              key = 'a',
-            },
-            {
-              desc = ' dotfiles',
-              group = 'Number',
-              action = 'Telescope dotfiles',
-              key = 'd',
-            },
-          },
-        },
-      }
-    end,
-    dependencies = { { 'nvim-tree/nvim-web-devicons' } },
-  },
-
-  { -- Github Copilot
-    'github/copilot.vim',
-  },
-
   -- LSP and completion
   { -- Lazydev
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
@@ -683,7 +619,7 @@ require('lazy').setup({
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     'uloco/bluloco.nvim',
-    lazy = fale,
+    lazy = false,
     priority = 1000, -- Make sure to load this before all the other start plugins.
     dependencies = { 'rktjmp/lush.nvim' },
     init = function()
