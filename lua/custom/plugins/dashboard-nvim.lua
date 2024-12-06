@@ -20,16 +20,40 @@ return {
               key = 'f',
             },
             {
-              desc = ' Apps',
+              desc = ' Src',
               group = 'DiagnosticHint',
-              action = 'Telescope app',
-              key = 'a',
+              action = function()
+                require('telescope').extensions.file_browser.file_browser {
+                  path = '~/src',
+                  respect_gitignore = false,
+                  hidden = true,
+                  grouped = true,
+                }
+              end,
+              key = 's',
             },
             {
-              desc = ' dotfiles',
+              desc = ' dotfiles',
               group = 'Number',
-              action = 'Telescope dotfiles',
+              action = function()
+                require('telescope.builtin').find_files {
+                  prompt_title = 'Dotfiles',
+                  cwd = vim.fn.expand '~/.dotfiles',
+                  hidden = true,
+                }
+              end, -- Use inline function for custom picker
               key = 'd',
+            },
+            {
+              desc = ' Neovim dotfiles',
+              group = 'Number',
+              action = function()
+                -- Change the working directory to your dotfiles Neovim config
+                vim.cmd 'cd ~/.dotfiles/.config/nvim'
+                -- Open Neovim Tree automatically
+                require('nvim-tree.api').tree.open()
+              end,
+              key = 'v',
             },
           },
         },

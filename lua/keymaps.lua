@@ -46,3 +46,40 @@ vim.keymap.set('n', '<C-;>', '<C-w>l', { noremap = true, desc = 'Move focus to t
 
 -- Reload the neovim config file
 vim.keymap.set('n', '<leader>sv', '<cmd>source $MYVIMRC<CR>', { desc = 'Reload the Neovim config file' })
+
+-- Launch the dashboard
+vim.keymap.set('n', '<leader>db', function()
+  vim.cmd 'Dashboard'
+end, { desc = '[D]ash[b]oard' })
+
+-- Open the telescope file browser, and notify nvim-tree of the new working directory
+vim.keymap.set('n', '<leader>fb', function()
+  require('telescope').extensions.file_browser.file_browser {
+    path = vim.fn.getcwd(),
+    respect_gitignore = false,
+    hidden = true,
+    grouped = true,
+    mappings = {
+      ['i'] = {
+        ['<C-t>'] = function(prompt_bufnr)
+          local action_state = require 'telescope.actions.state'
+          local actions = require 'telescope.actions'
+
+          local selected_entry = action_state.get_selected_entry()
+          local path = selected_entry.path
+
+          -- Change Neovim's working directory
+          if vim.fn.isdirectory(path) == 1 then
+            vim.cmd('cd ' .. path)
+            print('Working directory changed to: ' .. path)
+
+            -- Update nvim-tree to reflect the new working directory
+            require('nvim-tree.api').tree.change_root(path)
+          end
+
+          actions.close(prompt_bufnr)
+        end,
+      },
+    },
+  }
+end, { desc = 'File Browser with Project Change' })
