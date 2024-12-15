@@ -57,12 +57,15 @@ return {
 
       -- You can provide additional configuration to the handlers,
       -- see mason-nvim-dap README for more information
-      handlers = {},
+      handlers = {
+        -- Default handler for unhandled debuggers
+      },
 
       -- You'll need to check that you have the required things installed
       -- online, please don't ask me how to install them :)
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
+        'js-debug-adapter',
         'delve',
       },
     }
@@ -92,6 +95,34 @@ return {
     dap.listeners.after.event_initialized['dapui_config'] = dapui.open
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
+
+    -- Configurations for JavaScript/TypeScript
+    dap.configurations.javascript = {
+      {
+        type = 'js-debug-adapter',
+        request = 'launch',
+        name = 'Launch file',
+        program = '${file}',
+        cwd = vim.fn.getcwd(),
+        sourceMaps = true,
+        protocol = 'inspector',
+        console = 'integratedTerminal',
+      },
+      {
+        type = 'js-debug-adapter',
+        request = 'attach',
+        name = 'Attach to process',
+        processId = require('dap.utils').pick_process,
+        cwd = vim.fn.getcwd(),
+      },
+    }
+    dap.configurations.typescript = dap.configurations.javascript
+    local mason_path = vim.fn.glob(vim.fn.stdpath 'data' .. '/mason/')
+    dap.adapters.javascript = {
+      type = 'executable',
+      command = 'node',
+      args = { mason_path .. 'package/node-debug2-adapter/out/src/nodeDebug.js' },
+    }
 
     -- Install golang specific config
     require('dap-go').setup {
