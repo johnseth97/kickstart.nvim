@@ -280,7 +280,18 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
+        clangd = {
+          cmd = { 'clangd', '--compile-commands-dir=.' },
+          capabilities = capabilities,
+          settings = {
+            clangd = {
+              args = {
+                '-I/opt/homebrew/Cellar/GMP/6.3.0/include', -- GMP header include path
+                '-L/opt/homebrew/Cellar/GMP/6.3.0/lib', -- GMP library path
+              },
+            },
+          },
+        },
         -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
