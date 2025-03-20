@@ -1,6 +1,7 @@
 return {
   {
     'nvim-lualine/lualine.nvim',
+    lazy = false,
     opts = function(_, opts)
       -- Set up default options for lualine
       opts.options = {
