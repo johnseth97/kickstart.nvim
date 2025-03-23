@@ -211,7 +211,17 @@ return { -- Main LSP Configuration
     require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
     require('mason-lspconfig').setup {
-      ensure_installed = { 'lua_ls', 'pyright', 'tsserver', 'gopls', 'rust_analyzer' }, -- List of LSPs you want installed
+      ensure_installed = {
+        'lua_ls', -- Lua
+        'python-lsp-server', -- Python
+        'flake8', --Python
+        'deno', -- TypeScript
+        'eslint', -- JavaScript
+        'rust_analyzer', -- Rust
+        'prettier', -- Formatting
+        'prettierd', -- Formatting
+      }, -- List of LSPs you want installed
+
       automatic_installation = true, -- Automatically install missing LSPs
       handlers = {
         function(server_name)
