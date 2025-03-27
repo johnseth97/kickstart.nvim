@@ -207,19 +207,19 @@ return { -- Main LSP Configuration
     local ensure_installed = vim.tbl_keys(servers or {})
     vim.list_extend(ensure_installed, {
       'stylua', -- Used to format Lua code
+      'prettier', -- Used to format JavaScript code
+      'prettierd', -- Used to format JavaScript code
     })
     require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
     require('mason-lspconfig').setup {
       ensure_installed = {
         'lua_ls', -- Lua
-        'python-lsp-server', -- Python
-        'flake8', --Python
-        'deno', -- TypeScript
         'eslint', -- JavaScript
+        'denols', -- Deno
         'rust_analyzer', -- Rust
-        'prettier', -- Formatting
-        'prettierd', -- Formatting
+        'clangd', -- C/C++
+        'pyright', -- Python
       }, -- List of LSPs you want installed
 
       automatic_installation = true, -- Automatically install missing LSPs
