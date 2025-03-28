@@ -1,6 +1,16 @@
 return {
   'pmizio/typescript-tools.nvim',
   dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
+
+  -- Automatically toggle off typescript-tools when in a Deno project
+  ft = function()
+    local lsp_util = require 'helpers.lsp_util'
+    if lsp_util.is_deno_project(vim.fn.getcwd()) then
+      return false
+    end
+    return { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'json' }
+  end,
+
   opts = {},
   -- Config for: typescript-tools.nvim
   setup = function()
@@ -44,7 +54,7 @@ return {
         -- WARNING: it is disabled by default (maybe you configuration or distro already uses nvim-ts-autotag,
         -- that maybe have a conflict if enable this feature. )
         jsx_close_tag = {
-          enable = false,
+          enable = true,
           filetypes = { 'javascriptreact', 'typescriptreact' },
         },
       },

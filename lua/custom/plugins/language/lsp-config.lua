@@ -166,6 +166,32 @@ return { -- Main LSP Configuration
           },
         },
       },
+      denols = {
+        root_dir = require('lspconfig.util').root_pattern('deno.json', 'deno.jsonc'),
+        init_options = {
+          enable = true,
+          lint = true,
+          unstable = true,
+          suggest = {
+            imports = {
+              hosts = {
+                ['https://deno.land'] = true,
+                ['https://esm.sh'] = true,
+              },
+            },
+          },
+        },
+      },
+      eslint = {
+        root_dir = require('lspconfig.util').root_pattern('.eslintrc', '.eslintrc.js', '.eslintrc.json'),
+        settings = {
+          format = { enable = false },
+        },
+        on_attach = function(client)
+          -- Disable formatting for eslint
+          client.server_capabilities.documentFormattingProvider = false
+        end,
+      },
       -- gopls = {},
       -- pyright = {},
       -- rust_analyzer = {},
