@@ -3,6 +3,18 @@ return {
     'nvim-lualine/lualine.nvim',
     lazy = false,
     opts = function(_, opts)
+      local function custom_location()
+        local line = vim.fn.line '.'
+        local total_lines = vim.fn.line '$'
+        local col = vim.fn.col '.'
+        local current_line_content = vim.api.nvim_get_current_line()
+        local total_cols = #current_line_content
+
+        local percent_through_file = math.floor((line / total_lines) * 100)
+
+        return string.format('☰ %d/%d : %d/%d', line, total_lines, col, total_cols)
+      end
+
       -- Set up default options for lualine
       opts.options = {
         icons_enabled = true,
@@ -32,7 +44,7 @@ return {
           lualine_c = { 'filename', 'filesize' },
           lualine_x = { 'encoding' },
           lualine_y = { 'progress' },
-          lualine_z = { 'location' },
+          lualine_z = { custom_location },
         }
 
       -- Define inactive sections
@@ -41,7 +53,7 @@ return {
           lualine_a = {},
           lualine_b = {},
           lualine_c = { 'filename' },
-          lualine_x = { 'location' },
+          lualine_x = { custom_location },
           lualine_y = {},
           lualine_z = {},
         }

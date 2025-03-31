@@ -38,6 +38,10 @@ require 'keymaps'
 
 require 'autocommands'
 
+-- [[ Custom User Commands ]]
+-- johnseth97
+require 'usercommands'
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 require 'lazy-bootstrap'
