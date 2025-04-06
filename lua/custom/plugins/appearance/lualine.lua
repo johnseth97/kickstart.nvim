@@ -4,17 +4,13 @@ return {
     lazy = false,
     opts = function(_, opts)
       local function custom_location()
-        local line = vim.fn.line '.'
-        local total_lines = vim.fn.line '$'
-        local col = vim.fn.col '.'
-        local current_line_content = vim.api.nvim_get_current_line()
-        local total_cols = #current_line_content
+        local line = tonumber(vim.fn.line '.') or 0
+        local total_lines = tonumber(vim.fn.line '$') or 0
+        local col = tonumber(vim.fn.col '.') or 0
+        local total_cols = (tonumber(vim.fn.col '$') or 1) - 1
 
-        local percent_through_file = math.floor((line / total_lines) * 100)
-
-        return string.format('☰ %d/%d : %d/%d', line, total_lines, col, total_cols)
+        return string.format('[%d/%d] %d:%d', line, total_lines, col, total_cols)
       end
-
       -- Set up default options for lualine
       opts.options = {
         icons_enabled = true,
@@ -33,6 +29,10 @@ return {
           statusline = 100,
           tabline = 100,
           winbar = 100,
+        },
+        disabled_winbar_filetypes = {
+          statusline = { 'NvimTree_1', 'lazy', 'help' },
+          winbar = {},
         },
       }
 
