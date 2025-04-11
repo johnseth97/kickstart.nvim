@@ -44,7 +44,7 @@ vim.keymap.set('n', '<leader>db', function()
 end, { desc = '[D]ash[b]oard' })
 
 -- Telescope file browser with project change
-vim.keymap.set('n', '<leader>fb', function()
+vim.keymap.set('n', '<leader>cr', function()
   require('telescope').extensions.file_browser.file_browser {
     path = vim.fn.getcwd(),
     respect_gitignore = false,
@@ -73,4 +73,4 @@ vim.keymap.set('n', '<leader>fb', function()
       },
     },
   }
-end, { desc = 'File Browser with Project Change' })
+end, { desc = '[C]hange Project [R]oot Directory' })
