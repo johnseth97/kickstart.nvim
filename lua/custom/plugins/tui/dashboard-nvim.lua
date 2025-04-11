@@ -36,9 +36,11 @@ return {
               desc = ' dotfiles',
               group = 'Number',
               action = function()
+                local target = vim.fn.expand '~/.dotfiles'
+                vim.cmd('cd ' .. target)
                 require('telescope.builtin').find_files {
                   prompt_title = 'Dotfiles',
-                  cwd = vim.fn.expand '~/.dotfiles',
+                  cwd = target,
                   hidden = true,
                 }
               end, -- Use inline function for custom picker
@@ -48,14 +50,15 @@ return {
               desc = ' Neovim dotfiles',
               group = 'Number',
               action = function()
+                local target = vim.fn.expand '~/.dotfiles/.config/nvim'
+                vim.cmd('cd ' .. target)
                 require('telescope.builtin').find_files {
                   prompt_title = 'Neovim dotfiles',
-                  path = '~/.dotfiles/.config/nvim',
-                  cwd = vim.fn.expand '~/.dotfiles/.config/nvim',
+                  path = target,
+                  cwd = target,
                   respect_gitignore = true,
                   hidden = true,
                   grouped = true,
-                  select_buffer = true,
                 }
               end,
               key = 'v',
