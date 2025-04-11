@@ -1,5 +1,3 @@
--- Clear highlights on search when pressing <Esc> in normal mode
---  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 --
 -- Diagnostic keymaps
@@ -14,43 +12,23 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 --
 -- Remap jkl; to hjkl in normal mode
---  This is a personal preference, but I find it easier to use the home row keys
--- Map 'j' to move left while supporting motions like '3j'
 vim.keymap.set({ 'n', 'o' }, 'j', 'h', { noremap = true, desc = 'Move cursor left' })
---
--- Map 'k' to move down while supporting motions like '3k'
 vim.keymap.set({ 'n', 'o' }, 'k', 'j', { noremap = true, desc = 'Move cursor down' })
---
--- Map 'l' to move up while supporting motions like '3l'
 vim.keymap.set({ 'n', 'o' }, 'l', 'k', { noremap = true, desc = 'Move cursor up' })
---
--- Map ';' to move right while supporting motions like '3;'
 vim.keymap.set({ 'n', 'o' }, ';', 'l', { noremap = true, desc = 'Move cursor right' })
 --
 -- Remap jkl; to hjkl in visual mode
---  This is a personal preference, but I find it easier to use the home row keys
--- Map 'j' to move left while supporting motions like '3j'
 vim.keymap.set({ 'v', 'o' }, 'j', 'h', { noremap = true, desc = 'Move cursor left' })
---
--- Map 'k' to move down while supporting motions like '3k'
 vim.keymap.set({ 'v', 'o' }, 'k', 'j', { noremap = true, desc = 'Move cursor down' })
---
--- Map 'l' to move up while supporting motions like '3l'
 vim.keymap.set({ 'v', 'o' }, 'l', 'k', { noremap = true, desc = 'Move cursor up' })
---
--- Map ';' to move right while supporting motions like '3;'
 vim.keymap.set({ 'v', 'o' }, ';', 'l', { noremap = true, desc = 'Move cursor right' })
 --
--- TIP: Disable arrow keys in normal mode
+--Disable arrow keys in normal mode
 vim.keymap.set({ 'n', 'o' }, '<left>', '<cmd>echo "Use j to move!!"<CR>')
 vim.keymap.set({ 'n', 'o' }, '<right>', '<cmd>echo "Use ; to move!!"<CR>')
 vim.keymap.set({ 'n', 'o' }, '<up>', '<cmd>echo "Use l to move!!"<CR>')
 vim.keymap.set({ 'n', 'o' }, '<down>', '<cmd>echo "Use k to move!!"<CR>')
 --
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
---  See `:help wincmd` for a list of all window commands
 -- Remap split navigation
 vim.keymap.set('n', '<C-j>', '<C-w>h', { noremap = true, desc = 'Move focus to the left split' })
 vim.keymap.set('n', '<C-k>', '<C-w>j', { noremap = true, desc = 'Move focus to the bottom split' })
@@ -65,6 +43,7 @@ vim.keymap.set('n', '<leader>db', function()
   vim.cmd 'Dashboard'
 end, { desc = '[D]ash[b]oard' })
 
+-- Telescope file browser with project change
 vim.keymap.set('n', '<leader>fb', function()
   require('telescope').extensions.file_browser.file_browser {
     path = vim.fn.getcwd(),
