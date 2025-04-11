@@ -48,10 +48,15 @@ return {
               desc = ' Neovim dotfiles',
               group = 'Number',
               action = function()
-                -- Change the working directory to your dotfiles Neovim config
-                vim.cmd 'cd ~/.dotfiles/.config/nvim'
-                -- Open Neovim Tree automatically
-                require('nvim-tree.api').tree.open()
+                require('telescope.builtin').find_files {
+                  prompt_title = 'Neovim dotfiles',
+                  path = '~/.dotfiles/.config/nvim',
+                  cwd = vim.fn.expand '~/.dotfiles/.config/nvim',
+                  respect_gitignore = true,
+                  hidden = true,
+                  grouped = true,
+                  select_buffer = true,
+                }
               end,
               key = 'v',
             },

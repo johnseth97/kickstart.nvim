@@ -19,3 +19,19 @@ vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter' }, {
     end
   end,
 })
+
+vim.api.nvim_create_autocmd('VimEnter', {
+  callback = function()
+    local argv = vim.fn.argv()
+    if #argv == 1 and vim.fn.isdirectory(argv[1]) == 1 then
+      vim.cmd('cd ' .. argv[1]) -- Set CWD to the opened directory
+      require('telescope.builtin').find_files {
+        prompt_title = 'Find File in ' .. argv[1],
+        cwd = argv[1],
+        hidden = true,
+        follow = true,
+        no_ignore = true,
+      }
+    end
+  end,
+})

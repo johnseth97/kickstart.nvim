@@ -8,12 +8,12 @@ return {
     { '<leader>e', ':NvimTreeToggle<CR>', desc = 'File [E]xplorer', silent = true },
   },
   opts = {
+    hijack_netrw = false,
     update_focused_file = {
       enable = true,
       update_cwd = true,
     },
     view = {
-      -- Optional: you can change width here if needed
       width = 35,
     },
     on_attach = function(bufnr)
