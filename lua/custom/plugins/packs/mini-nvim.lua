@@ -1,5 +1,6 @@
 return { -- Mini.nvim: Collection of various small independent plugins/modules
   'echasnovski/mini.nvim',
+  lazy = false,
   config = function()
     -- Better Around/Inside textobjects
     --
@@ -18,9 +19,6 @@ return { -- Mini.nvim: Collection of various small independent plugins/modules
 
     -- Git integration for Neovim, :Git <command>
     require('mini.git').setup()
-
-    -- Tabline for Neovim
-    require('mini.tabline').setup()
 
     -- Simple and easy statusline.
     --  You could remove this setup call if you don't like it,
