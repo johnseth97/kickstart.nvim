@@ -117,6 +117,6 @@ return { -- Fuzzy Finder (files, lsp, etc)
         cwd = vim.fn.expand '~/.dotfiles', -- Explicitly set cwd
         hidden = true, -- Include hidden files
       }
-    end, { desc = '[S]earch [D]otfiles' })
+    end, { desc = '[S]earch Dotfiles/[C]onfig' })
   end,
 }
