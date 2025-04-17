@@ -39,9 +39,13 @@ vim.keymap.set('n', '<C-;>', '<C-w>l', { noremap = true, desc = 'Move focus to t
 vim.keymap.set('n', '<leader>sv', '<cmd>source $MYVIMRC<CR>', { desc = 'Reload the Neovim config file' })
 
 -- Launch the dashboard
-vim.keymap.set('n', '<leader>db', function()
+vim.keymap.set('n', '<leader>da', function()
   vim.cmd 'Dashboard'
-end, { desc = '[D]ash[b]oard' })
+end, { desc = '[da]shboard' })
+
+vim.keymap.set('n', '<leader>db', function()
+  vim.cmd [[DBUI]]
+end, { desc = '[d]ata[b]ase UI' })
 
 -- Telescope file browser with project change
 vim.keymap.set('n', '<leader>cr', function()
