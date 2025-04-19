@@ -44,23 +44,58 @@ return { -- Fuzzy Finder (files, lsp, etc)
 
     -- [[ Configure Telescope ]]
     -- See `:help telescope` and `:help telescope.setup()`
-    require('telescope').setup {
-      -- You can put your default mappings / updates / etc. in here
-      --  All the info you're looking for is in `:help telescope.setup()`
-      --
-      -- defaults = {
-      --   mappings = {
-      --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-      --   },
-      -- },
-      -- pickers = {}
+    local telescope = require 'telescope'
+    local actions = require 'telescope.actions'
+    local builtin = require 'telescope.builtin'
+
+    require('telescope').setup {}
+
+    -- 1) your existing setup
+    telescope.setup {
       extensions = {
         ['ui-select'] = {
           require('telescope.themes').get_dropdown(),
         },
       },
+      defaults = {},
+      pickers = {},
     }
+    pcall(telescope.load_extension, 'fzf')
+    pcall(telescope.load_extension, 'ui-select')
 
+    -- 2) **Insert the toggleable wrapper HERE**:
+    local function make_toggleable(picker_fn)
+      return function(initial_opts)
+        local opts = vim.deepcopy(initial_opts or {})
+        local showDot = opts.hidden or false
+        local noIgnore = opts.no_ignore or false
+
+        opts.attach_mappings = function(_, map)
+          map({ 'i', 'n' }, '<C-h>', function(prompt_bufnr)
+            actions.close(prompt_bufnr)
+            showDot = not showDot
+            opts.hidden = showDot
+            picker_fn(opts)
+          end)
+          map({ 'i', 'n' }, '<C-i>', function(prompt_bufnr)
+            actions.close(prompt_bufnr)
+            noIgnore = not noIgnore
+            opts.no_ignore = noIgnore
+            picker_fn(opts)
+          end)
+          return true
+        end
+
+        picker_fn(opts)
+      end
+    end
+
+    local toggle_find_files = make_toggleable(builtin.find_files)
+    local toggle_live_grep = make_toggleable(builtin.live_grep)
+
+    -- 3) then your mappings, swapping out the built‑ins:
+    vim.keymap.set('n', '<leader>sf', toggle_find_files, { desc = '[S]earch [F]iles' })
+    vim.keymap.set('n', '<leader>sg', toggle_live_grep, { desc = '[S]earch by [G]rep' })
     -- Enable Telescope extensions if they are installed
     pcall(require('telescope').load_extension, 'fzf')
     pcall(require('telescope').load_extension, 'ui-select')
@@ -69,24 +104,12 @@ return { -- Fuzzy Finder (files, lsp, etc)
     local builtin = require 'telescope.builtin'
     vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
     vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-    vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
     vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
     vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
     vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
     vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
     vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
     vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
-
-    vim.keymap.set('n', '<leader>sg', function()
-      builtin.live_grep {
-        additional_args = function()
-          return {
-            '--hidden',
-            '--no-ignore',
-          }
-        end,
-      }
-    end, { desc = '[S]earch by [G]rep' })
 
     -- Slightly advanced example of overriding default behavior and theme
     vim.keymap.set('n', '<leader>/', function()
