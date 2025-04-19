@@ -8,7 +8,6 @@ return {
         local total_lines = tonumber(vim.fn.line '$') or 0
         local col = tonumber(vim.fn.col '.') or 0
         local total_cols = (tonumber(vim.fn.col '$') or 1) - 1
-
         return string.format('[%d/%d] %d:%d', line, total_lines, col, total_cols)
       end
       -- Set up default options for lualine
@@ -42,7 +41,7 @@ return {
           lualine_a = { 'mode' },
           lualine_b = { 'branch', 'diff', 'diagnostics' },
           lualine_c = { 'filename', 'filesize' },
-          lualine_x = { 'encoding' },
+          lualine_x = { 'encoding', require('codex').status() },
           lualine_y = { 'progress' },
           lualine_z = { custom_location },
         }
