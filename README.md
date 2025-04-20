@@ -1,8 +1,4 @@
-<a href="https://dotfyle.com/johnseth97/kickstartnvim"><img src="https://dotfyle.com/johnseth97/kickstartnvim/badges/plugins?style=flat" /></a>
-<a href="https://dotfyle.com/johnseth97/kickstartnvim"><img src="https://dotfyle.com/johnseth97/kickstartnvim/badges/leaderkey?style=flat" /></a>
-<a href="https://dotfyle.com/johnseth97/kickstartnvim"><img src="https://dotfyle.com/johnseth97/kickstartnvim/badges/plugin-manager?style=flat" /></a>
-
-# kickstart.nvim/
+# johnseth97/kickstart.nvim/
 
 <a href="https://dotfyle.com/johnseth97/kickstartnvim"><img src="https://dotfyle.com/johnseth97/kickstartnvim/badges/plugins?style=flat" /></a>
 <a href="https://dotfyle.com/johnseth97/kickstartnvim"><img src="https://dotfyle.com/johnseth97/kickstartnvim/badges/leaderkey?style=flat" /></a>
