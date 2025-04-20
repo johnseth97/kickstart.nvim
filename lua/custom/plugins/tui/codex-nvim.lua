@@ -4,7 +4,7 @@ return {
   lazy = true,
   keys = {
     {
-      '<leader>cc',
+      '<leader>cd',
       function()
         require('codex').toggle()
       end,
