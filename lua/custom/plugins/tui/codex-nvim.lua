@@ -1,6 +1,5 @@
 return {
   'johnseth97/codex.nvim',
-  branch = 'patch-2',
   lazy = true,
   keys = {
     {
