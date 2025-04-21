@@ -22,7 +22,7 @@ return {
 
         system_prompt = 'COPILOT_INSTRUCTIONS', -- System prompt to use (can be specified manually in prompt via /).
 
-        model = 'gpt-4o-2024-11-20', -- Default model to use, see ':CopilotChatModels' for available models (can be specified manually in prompt via $).
+        model = 'gpt-4o', -- Default model to use, see ':CopilotChatModels' for available models (can be specified manually in prompt via $).
         agent = 'copilot', -- Default agent to use, see ':CopilotChatAgents' for available agents (can be specified manually in prompt via @).
         context = nil, -- Default context or array of contexts to use (can be specified manually in prompt via #).
         sticky = nil, -- Default sticky prompt or array of sticky prompts to use at start of every new chat.
@@ -35,9 +35,9 @@ return {
 
         -- default window options
         window = {
-          layout = 'vertical', -- 'vertical', 'horizontal', 'float', 'replace', or a function that returns the layout
+          layout = 'float', -- 'vertical', 'horizontal', 'float', 'replace', or a function that returns the layout
           width = 0.5, -- fractional width of parent, or absolute width in columns when > 1
-          height = 0.5, -- fractional height of parent, or absolute height in rows when > 1
+          height = 0.8, -- fractional height of parent, or absolute height in rows when > 1
           -- Options below only apply to floating windows
           relative = 'editor', -- 'editor', 'win', 'cursor', 'mouse'
           border = 'single', -- 'none', single', 'double', 'rounded', 'solid', 'shadow'
