@@ -68,7 +68,7 @@ return {
     -- 3) Mason integration for DAP adapters
     {
       'jay-babu/mason-nvim-dap.nvim',
-      event = 'VeryLazy',
+      after = 'nvim-dap',
       dependencies = { 'williamboman/mason.nvim' },
       config = function()
         require('mason-nvim-dap').setup {
@@ -76,13 +76,6 @@ return {
           ensure_installed = { 'js-debug-adapter', 'delve' },
         }
       end,
-    },
-
-    -- 4) Mason itself (for manual control)
-    {
-      'williamboman/mason.nvim',
-      cmd = { 'Mason', 'MasonInstall', 'MasonUninstall', 'MasonLog' },
-      config = true,
     },
 
     -- 5) Some extra helper you had in your deps
