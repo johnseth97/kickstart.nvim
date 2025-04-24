@@ -1,6 +1,6 @@
 return { -- Mini.nvim: Collection of various small independent plugins/modules
   'echasnovski/mini.nvim',
-  lazy = false,
+  event = 'BufReadPost',
   config = function()
     -- Better Around/Inside textobjects
     --

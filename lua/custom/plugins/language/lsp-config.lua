@@ -1,7 +1,6 @@
-return { -- Main LSP Configuration
-  -- Main LSP Configuration
+return {
   'neovim/nvim-lspconfig',
-  ft = { -- File types to load this plugin
+  ft = {
     'c',
     'cpp',
     'lua',
@@ -17,108 +16,110 @@ return { -- Main LSP Configuration
     'json',
   },
   dependencies = {
-    -- Automatically install LSPs and related tools to stdpath for Neovim
-    { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
-    'williamboman/mason-lspconfig.nvim',
-    'WhoIsSethDaniel/mason-tool-installer.nvim',
-
-    -- Allows extra capabilities provided by nvim-cmp
     { 'hrsh7th/cmp-nvim-lsp', event = 'InsertEnter' },
   },
   config = function()
     local lspconfig = require 'lspconfig'
+    local cmp_nvim_lsp = require 'cmp_nvim_lsp'
 
-    -- Configure Lua language server globally to recognize `vim` and Neovim runtime
+    -- detect both your "real" config path and stdpath('config')
+    local std_cfg = vim.fn.stdpath 'config'
+    local dotcfg = vim.fn.expand '~/.dotfiles/.config/nvim'
+
+    -- Setup LuaLS
+    local capabilities = vim.lsp.protocol.make_client_capabilities()
+    capabilities = vim.tbl_deep_extend('force', capabilities, cmp_nvim_lsp.default_capabilities())
+
     lspconfig.lua_ls.setup {
+      capabilities = capabilities,
       settings = {
         Lua = {
-          runtime = { version = 'LuaJIT' },
-          diagnostics = { globals = { 'vim' } },
-          workspace = { library = vim.api.nvim_get_runtime_file('', true) }, -- make the server aware of Neovim runtime files
-          telemetry = { enable = false },
+          runtime = {
+            version = 'LuaJIT',
+            path = vim.split(package.path, ';'),
+          },
+          diagnostics = { globals = { 'vim', 'use' } },
+          workspace = {
+            -- index all of your config
+            library = {
+              [std_cfg .. '/lua'] = true,
+              [dotcfg .. '/lua'] = true,
+              -- if you have lua/custom
+              [dotcfg .. '/lua/custom'] = true,
+              -- index lazy.nvim itself so you can jump into its source
+              [vim.fn.stdpath 'data' .. '/lazy/lazy.nvim/lua'] = true,
+            },
+            checkThirdParty = false,
+          },
           completion = { callSnippet = 'Replace' },
+          telemetry = { enable = false },
         },
       },
     }
 
-    vim.api.nvim_create_autocmd('LspAttach', {
-      group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
-      callback = function(event)
-        local bufnr = event.buf
-        local map = function(keys, func, desc, mode)
-          mode = mode or 'n'
-          vim.keymap.set(mode, keys, func, { buffer = bufnr, desc = 'LSP: ' .. desc })
-        end
-
-        -- Standard LSP mappings using Telescope
-        map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-        map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-        map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-        map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
-        map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-        map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-        map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-        map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
-        map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-
-        local client = vim.lsp.get_client_by_id(event.data.client_id)
-        if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
-          local hl_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
-          vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-            buffer = bufnr,
-            group = hl_augroup,
-            callback = vim.lsp.buf.document_highlight,
-          })
-          vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-            buffer = bufnr,
-            group = hl_augroup,
-            callback = vim.lsp.buf.clear_references,
-          })
-          vim.api.nvim_create_autocmd('LspDetach', {
-            group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
-            callback = function(event2)
-              vim.lsp.buf.clear_references()
-              vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
-            end,
-          })
-        end
-
-        if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-          map('<leader>th', function()
-            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = bufnr })
-          end, '[T]oggle Inlay [H]ints')
-        end
-      end,
-    })
-
-    -- Extend capabilities for nvim-cmp
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
-
+    -- Your other servers
     local servers = {
       clangd = {
         cmd = { 'clangd', '--compile-commands-dir=.' },
         capabilities = capabilities,
-        settings = { clangd = { args = { '-I/opt/homebrew/Cellar/GMP/6.3.0/include', '-L/opt/homebrew/Cellar/GMP/6.3.0/lib' } } },
+        settings = {
+          clangd = {
+            args = {
+              '-I/opt/homebrew/Cellar/GMP/6.3.0/include',
+              '-L/opt/homebrew/Cellar/GMP/6.3.0/lib',
+            },
+          },
+        },
       },
       denols = {
-        root_dir = require('lspconfig.util').root_pattern('deno.json', 'deno.jsonc'),
+        root_dir = lspconfig.util.root_pattern('deno.json', 'deno.jsonc'),
         init_options = {
           enable = true,
           lint = true,
           unstable = true,
-          suggest = { imports = { hosts = { ['https://deno.land'] = true, ['https://esm.sh'] = true } } },
+          suggest = {
+            imports = {
+              hosts = {
+                ['https://deno.land'] = true,
+                ['https://esm.sh'] = true,
+              },
+            },
+          },
         },
+        capabilities = capabilities,
       },
       eslint = {
-        root_dir = require('lspconfig.util').root_pattern('.eslintrc', '.eslintrc.js', '.eslintrc.json'),
+        root_dir = lspconfig.util.root_pattern('.eslintrc', '.eslintrc.js', '.eslintrc.json'),
         settings = { format = { enable = false } },
         on_attach = function(client)
           client.server_capabilities.documentFormattingProvider = false
         end,
+        capabilities = capabilities,
       },
-      lua_ls = { capabilities = capabilities },
-      -- Add other servers here...
+      -- lua_ls is done above
     }
+
+    -- Actually iterate and setup each server
+    for name, opts in pairs(servers) do
+      lspconfig[name].setup(opts)
+    end
+
+    -- LspAttach keymaps (unchanged)
+    vim.api.nvim_create_autocmd('LspAttach', {
+      group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
+      callback = function(ev)
+        local buf = ev.buf
+        local map = function(keys, fn, desc, mode)
+          mode = mode or 'n'
+          vim.keymap.set(mode, keys, fn, { buffer = buf, desc = 'LSP: ' .. desc })
+        end
+
+        map('gd', require('telescope.builtin').lsp_definitions, '[G]oto Definition')
+        map('gr', require('telescope.builtin').lsp_references, '[G]oto References')
+        map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+        map('<leader>ca', vim.lsp.buf.code_action, '[C]ode Action')
+        -- add any others you like…
+      end,
+    })
   end,
 }

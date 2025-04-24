@@ -10,7 +10,6 @@ return {
     'DBUIAddConnection',
     'DBUIFindBuffer',
   },
-  event = 'VeryLazy',
   config = function()
     vim.g.db_ui_dotenv_variable_prefix = '__DISABLED__'
     local handle = io.popen 'printenv'

@@ -3,7 +3,7 @@ return {
   'akinsho/bufferline.nvim',
   dependencies = { 'nvim-tree/nvim-web-devicons' },
   -- fire this right after UIEnter, once all the core startup is done
-  event = 'VeryLazy',
+  event = 'BufReadPost',
 
   -- all of your `setup { … }` table goes here
   opts = function()

@@ -1,5 +1,5 @@
 return { -- Write file as sudo
   'lambdalisue/suda.vim',
-  lazy = false,
+  cmd = { 'SudaRead', 'SudaWrite' },
   version = '*',
 }
