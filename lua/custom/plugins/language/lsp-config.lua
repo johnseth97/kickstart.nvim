@@ -1,20 +1,29 @@
 return { -- Main LSP Configuration
-
-  lazy = false,
   -- Main LSP Configuration
   'neovim/nvim-lspconfig',
+  ft = { -- File types to load this plugin
+    'c',
+    'cpp',
+    'lua',
+    'python',
+    'javascript',
+    'typescript',
+    'rust',
+    'go',
+    'sh',
+    'bash',
+    'html',
+    'css',
+    'json',
+  },
   dependencies = {
     -- Automatically install LSPs and related tools to stdpath for Neovim
     { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
     'williamboman/mason-lspconfig.nvim',
     'WhoIsSethDaniel/mason-tool-installer.nvim',
 
-    -- Useful status updates for LSP.
-    -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-    { 'j-hui/fidget.nvim', opts = {} },
-
     -- Allows extra capabilities provided by nvim-cmp
-    'hrsh7th/cmp-nvim-lsp',
+    { 'hrsh7th/cmp-nvim-lsp', event = 'InsertEnter' },
   },
   config = function()
     local lspconfig = require 'lspconfig'
@@ -23,21 +32,11 @@ return { -- Main LSP Configuration
     lspconfig.lua_ls.setup {
       settings = {
         Lua = {
-          runtime = {
-            version = 'LuaJIT', -- Neovim runs LuaJIT
-          },
-          diagnostics = {
-            globals = { 'vim' }, -- treat `vim` as a global
-          },
-          workspace = {
-            library = vim.api.nvim_get_runtime_file('', true), -- make Neovim runtime files available
-          },
-          telemetry = {
-            enable = false,
-          },
-          completion = {
-            callSnippet = 'Replace',
-          },
+          runtime = { version = 'LuaJIT' },
+          diagnostics = { globals = { 'vim' } },
+          workspace = { library = vim.api.nvim_get_runtime_file('', true) }, -- make the server aware of Neovim runtime files
+          telemetry = { enable = false },
+          completion = { callSnippet = 'Replace' },
         },
       },
     }
@@ -120,23 +119,6 @@ return { -- Main LSP Configuration
       },
       lua_ls = { capabilities = capabilities },
       -- Add other servers here...
-    }
-
-    require('mason').setup()
-    local ensure_installed = vim.tbl_keys(servers)
-    vim.list_extend(ensure_installed, { 'stylua', 'prettier', 'prettierd' })
-    require('mason-tool-installer').setup { ensure_installed = ensure_installed }
-
-    require('mason-lspconfig').setup {
-      ensure_installed = { 'lua_ls', 'eslint', 'denols', 'rust_analyzer', 'clangd', 'pyright' },
-      automatic_installation = true,
-      handlers = {
-        function(server_name)
-          local opts = servers[server_name] or {}
-          opts.capabilities = vim.tbl_deep_extend('force', {}, capabilities, opts.capabilities or {})
-          require('lspconfig')[server_name].setup(opts)
-        end,
-      },
     }
   end,
 }

@@ -1,24 +1,16 @@
+-- lua/custom/plugins/tui/project-nvim.lua
 return {
   'ahmedkhalf/project.nvim',
-  lazy = false,
+  event = 'VeryLazy',
   dependencies = { 'nvim-telescope/telescope.nvim' },
   config = function()
+    -- explicitly require the correct module and pass your opts
     require('project_nvim').setup {
-      -- automatically scan ~/src for any git repo, up to 3 levels deep
-      base_dirs = {
-        { '~/src', max_depth = 2 },
-      },
-      -- patterns it looks for to identify a project root
+      detection_methods = { 'pattern' },
       patterns = { '.git' },
-      -- show hidden files when scanning
+      base_dirs = { { '~/src', max_depth = 2 } },
       show_hidden = true,
-      -- ignore your ~/.local/share or other big folders by name
-      exclude_dirs = { '~/.local/share' },
-      -- if you want it to silently `:cd` into new projects
-      silent_chdir = false,
+      respect_gitignore = false,
     }
-
-    -- make sure telescope knows about it
-    require('telescope').load_extension 'projects'
   end,
 }

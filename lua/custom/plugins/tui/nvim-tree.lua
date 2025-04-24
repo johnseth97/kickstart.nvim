@@ -1,12 +1,11 @@
 return {
   'nvim-tree/nvim-tree.lua',
   version = '*',
-  lazy = false,
-  cmd = 'NvimTreeToggle',
-  keys = {
-    { '\\', ':NvimTreeToggle<CR>', desc = 'NvimTree Toggle', silent = true },
-    { '<leader>e', ':NvimTreeToggle<CR>', desc = 'File [E]xplorer', silent = true },
-  },
+  cmd = { 'NvimTreeToggle' },
+  init = function()
+    vim.keymap.set('n', '\\', '<cmd>NvimTreeToggle<CR>', { desc = 'Toggle Explorer', silent = true })
+    vim.keymap.set('n', '<leader>e', '<cmd>NvimTreeToggle<CR>', { desc = 'File [E]xplorer', silent = true })
+  end,
   opts = {
     hijack_netrw = false,
     update_focused_file = {

@@ -1,7 +1,7 @@
 return {
   {
     'nvim-lualine/lualine.nvim',
-    lazy = false,
+    event = 'UIEnter',
     opts = function(_, opts)
       local function custom_location()
         local line = tonumber(vim.fn.line '.') or 0
