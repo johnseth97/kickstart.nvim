@@ -43,6 +43,7 @@ require('lazy').setup {
 
     -- 2) Now your “import =” blocks and other single specs
     { import = 'custom.plugins.language.lazydev-nvim' },
+    { import = 'custom.plugins.language.dap' },
     { import = 'custom.plugins.appearance' },
     { import = 'custom.plugins.language' },
     { import = 'custom.plugins.packs' },
