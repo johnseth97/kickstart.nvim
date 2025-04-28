@@ -14,6 +14,7 @@ return {
     'html',
     'css',
     'json',
+    'md',
   },
   dependencies = {
     { 'hrsh7th/cmp-nvim-lsp', event = 'InsertEnter' },
