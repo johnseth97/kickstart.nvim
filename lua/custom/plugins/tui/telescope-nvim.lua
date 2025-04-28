@@ -1,145 +1,126 @@
-return { -- Fuzzy Finder (files, lsp, etc)
-  'nvim-telescope/telescope.nvim',
-  event = 'VimEnter',
-  branch = '0.1.x',
-  dependencies = {
-    'nvim-lua/plenary.nvim',
-    { -- If encountering errors, see telescope-fzf-native README for installation instructions
-      'nvim-telescope/telescope-fzf-native.nvim',
-
-      -- `build` is used to run some command when the plugin is installed/updated.
-      -- This is only run then, not every time Neovim starts up.
-      build = 'make',
-
-      -- `cond` is a condition used to determine whether this plugin should be
-      -- installed and loaded.
-      cond = function()
-        return vim.fn.executable 'make' == 1
-      end,
-    },
-    { 'nvim-telescope/telescope-ui-select.nvim' },
-
-    -- Useful for getting pretty icons, but requires a Nerd Font.
-    { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
-  },
-  config = function()
-    -- Telescope is a fuzzy finder that comes with a lot of different things that
-    -- it can fuzzy find! It's more than just a "file finder", it can search
-    -- many different aspects of Neovim, your workspace, LSP, and more!
-    --
-    -- The easiest way to use Telescope, is to start by doing something like:
-    --  :Telescope help_tags
-    --
-    -- After running this command, a window will open up and you're able to
-    -- type in the prompt window. You'll see a list of `help_tags` options and
-    -- a corresponding preview of the help.
-    --
-    -- Two important keymaps to use while in Telescope are:
-    --  - Insert mode: <c-/>
-    --  - Normal mode: ?
-    --
-    -- This opens a window that shows you all of the keymaps for the current
-    -- Telescope picker. This is really useful to discover what Telescope can
-    -- do as well as how to actually do it!
-
-    -- [[ Configure Telescope ]]
-    -- See `:help telescope` and `:help telescope.setup()`
-    local telescope = require 'telescope'
-    local actions = require 'telescope.actions'
-    local builtin = require 'telescope.builtin'
-
-    require('telescope').setup {}
-
-    -- 1) your existing setup
-    telescope.setup {
-      extensions = {
-        ['ui-select'] = {
-          require('telescope.themes').get_dropdown(),
-        },
+return {
+  { -- Telescope core
+    'nvim-telescope/telescope.nvim',
+    cmd = 'Telescope',
+    branch = '0.1.x',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      { -- If encountering errors, see telescope-fzf-native README for installation instructions
+        'nvim-telescope/telescope-fzf-native.nvim',
+        build = 'make',
+        cond = function()
+          return vim.fn.executable 'make' == 1
+        end,
       },
-      defaults = {},
-      pickers = {},
-    }
-    pcall(telescope.load_extension, 'fzf')
-    pcall(telescope.load_extension, 'ui-select')
+      { 'nvim-telescope/telescope-ui-select.nvim' },
+      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+    },
+    config = function()
+      local telescope = require 'telescope'
+      local actions = require 'telescope.actions'
+      local builtin = require 'telescope.builtin'
 
-    -- 2) **Insert the toggleable wrapper HERE**:
-    local function make_toggleable(picker_fn)
-      return function(initial_opts)
-        local opts = vim.deepcopy(initial_opts or {})
-        local showDot = opts.hidden or false
-        local noIgnore = opts.no_ignore or false
+      telescope.setup {
+        extensions = {
+          ['ui-select'] = {
+            require('telescope.themes').get_dropdown(),
+          },
+        },
+        defaults = {},
+        pickers = {},
+      }
 
-        opts.attach_mappings = function(_, map)
-          map({ 'i', 'n' }, '<C-h>', function(prompt_bufnr)
-            actions.close(prompt_bufnr)
-            showDot = not showDot
-            opts.hidden = showDot
-            picker_fn(opts)
-          end)
-          map({ 'i', 'n' }, '<C-i>', function(prompt_bufnr)
-            actions.close(prompt_bufnr)
-            noIgnore = not noIgnore
-            opts.no_ignore = noIgnore
-            picker_fn(opts)
-          end)
-          return true
+      pcall(telescope.load_extension, 'fzf')
+      pcall(telescope.load_extension, 'ui-select')
+
+      -- Optional: wrap search pickers
+      local function make_toggleable(picker_fn)
+        return function(initial_opts)
+          local opts = vim.deepcopy(initial_opts or {})
+          local showDot = opts.hidden or false
+          local noIgnore = opts.no_ignore or false
+
+          opts.attach_mappings = function(_, map)
+            map({ 'i', 'n' }, '<C-h>', function(prompt_bufnr)
+              actions.close(prompt_bufnr)
+              showDot = not showDot
+              opts.hidden = showDot
+              picker_fn(opts)
+            end)
+            map({ 'i', 'n' }, '<C-i>', function(prompt_bufnr)
+              actions.close(prompt_bufnr)
+              noIgnore = not noIgnore
+              opts.no_ignore = noIgnore
+              picker_fn(opts)
+            end)
+            return true
+          end
+
+          picker_fn(opts)
         end
-
-        picker_fn(opts)
       end
-    end
 
-    local toggle_find_files = make_toggleable(builtin.find_files)
-    local toggle_live_grep = make_toggleable(builtin.live_grep)
+      local toggle_find_files = make_toggleable(builtin.find_files)
+      local toggle_live_grep = make_toggleable(builtin.live_grep)
 
-    -- 3) then your mappings, swapping out the built‑ins:
-    vim.keymap.set('n', '<leader>sf', toggle_find_files, { desc = '[S]earch [F]iles' })
-    vim.keymap.set('n', '<leader>sg', toggle_live_grep, { desc = '[S]earch by [G]rep' })
-    -- Enable Telescope extensions if they are installed
-    pcall(require('telescope').load_extension, 'fzf')
-    pcall(require('telescope').load_extension, 'ui-select')
+      -- Keymaps
+      vim.keymap.set('n', '<leader>sf', toggle_find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sg', toggle_live_grep, { desc = '[S]earch by [G]rep' })
 
-    -- See `:help telescope.builtin`
-    local builtin = require 'telescope.builtin'
-    vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-    vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-    vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-    vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-    vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-    vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-    vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-    vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      -- Regular keymaps
+      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
+      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
+      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
+      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
-    -- Slightly advanced example of overriding default behavior and theme
-    vim.keymap.set('n', '<leader>/', function()
-      -- You can pass additional configuration to Telescope to change the theme, layout, etc.
-      builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-        winblend = 10,
-        previewer = false,
-      })
-    end, { desc = '[/] Fuzzily search in current buffer' })
+      -- Special overrides
+      vim.keymap.set('n', '<leader>/', function()
+        builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+          winblend = 10,
+          previewer = false,
+        })
+      end, { desc = '[/] Fuzzily search in current buffer' })
 
-    -- It's also possible to pass additional configuration options.
-    --  See `:help telescope.builtin.live_grep()` for information about particular keys
-    vim.keymap.set('n', '<leader>s/', function()
-      builtin.live_grep {
-        grep_open_files = true,
-        prompt_title = 'Live Grep in Open Files',
-      }
-    end, { desc = '[S]earch [/] in Open Files' })
+      vim.keymap.set('n', '<leader>s/', function()
+        builtin.live_grep {
+          grep_open_files = true,
+          prompt_title = 'Live Grep in Open Files',
+        }
+      end, { desc = '[S]earch [/] in Open Files' })
 
-    -- Shortcut for searching your Neovim configuration files
-    vim.keymap.set('n', '<leader>sn', function()
-      builtin.find_files { cwd = vim.fn.stdpath 'config' }
-    end, { desc = '[S]earch [N]eovim files' })
+      vim.keymap.set('n', '<leader>sn', function()
+        builtin.find_files { cwd = vim.fn.stdpath 'config' }
+      end, { desc = '[S]earch [N]eovim files' })
 
-    vim.keymap.set('n', '<leader>sc', function()
-      require('telescope.builtin').find_files {
-        prompt_title = 'Dotfiles',
-        cwd = vim.fn.expand '~/.dotfiles', -- Explicitly set cwd
-        hidden = true, -- Include hidden files
-      }
-    end, { desc = '[S]earch Dotfiles/[C]onfig' })
-  end,
+      vim.keymap.set('n', '<leader>sc', function()
+        builtin.find_files {
+          prompt_title = 'Dotfiles',
+          cwd = vim.fn.expand '~/.dotfiles',
+          hidden = true,
+        }
+      end, { desc = '[S]earch Dotfiles/[C]onfig' })
+    end,
+  },
+
+  { -- Telescope Project Extension
+    'nvim-telescope/telescope-project.nvim',
+    dependencies = { 'nvim-telescope/telescope.nvim' },
+    config = function()
+      require('telescope').load_extension 'project'
+    end,
+    cmd = 'Telescope', -- Only loads when :Telescope is triggered
+  },
+
+  { -- Telescope File Browser Extension
+    'nvim-telescope/telescope-file-browser.nvim',
+    dependencies = { 'nvim-telescope/telescope.nvim' },
+    config = function()
+      require('telescope').load_extension 'file_browser'
+    end,
+    cmd = 'Telescope', -- Only loads when :Telescope is triggered
+  },
 }

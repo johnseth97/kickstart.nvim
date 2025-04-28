@@ -1,6 +1,6 @@
 return {
   'nvim-telescope/telescope-project.nvim',
-  event = 'VeryLazy',
+  cmd = 'Telescope',
   dependencies = { 'nvim-telescope/telescope.nvim', 'ahmedkhalf/project.nvim' },
   config = function()
     require('telescope').setup {

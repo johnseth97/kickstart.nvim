@@ -6,9 +6,6 @@ return {
     event = 'VimEnter',
     dependencies = {
       'nvim-tree/nvim-web-devicons',
-      'ahmedkhalf/project.nvim',
-      'nvim-telescope/telescope-project.nvim',
-      'nvim-telescope/telescope-file-browser.nvim',
     },
     opts = {
       theme = 'hyper',
@@ -76,17 +73,6 @@ return {
               }
             end,
           },
-        },
-
-        project = {
-          enable = true,
-          limit = 8,
-          icon = '  ',
-          label = 'Recent Projects:',
-          action = function(path)
-            vim.cmd('cd ' .. path)
-            require('telescope.builtin').find_files { cwd = path, hidden = true }
-          end,
         },
       },
     },
