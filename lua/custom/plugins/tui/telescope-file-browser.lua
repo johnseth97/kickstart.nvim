@@ -7,7 +7,7 @@ return {
     require('telescope').setup {
       extensions = {
         file_browser = {
-          hijack_netrw = false, -- replace netrw
+          hijack_netrw = true, -- replace netrw
         },
       },
     }
