@@ -16,6 +16,7 @@ return {
       },
       config = {
         week_header = { enable = true },
+        project = { enable = false },
 
         shortcut = {
           {

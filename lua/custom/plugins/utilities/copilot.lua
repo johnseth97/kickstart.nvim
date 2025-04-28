@@ -2,6 +2,7 @@ return {
   { -- GitHub Copilot plugin
     'github/copilot.vim',
     cmd = 'Copilot panel',
+    event = 'InsertEnter',
     config = function()
       -- Set up the keymap to open the Copilot panel using the correct command
       vim.api.nvim_set_keymap('n', '<leader>cp', '<cmd>Copilot panel<CR>', { noremap = true, silent = true, desc = 'Open the Copilot panel' })
