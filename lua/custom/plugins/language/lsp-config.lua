@@ -38,7 +38,16 @@ return {
             version = 'LuaJIT',
             path = vim.split(package.path, ';'),
           },
-          diagnostics = { globals = { 'vim', 'use' } },
+          globals = {
+            'vim',
+            'describe',
+            'it',
+            'before_each',
+            'after_each',
+            'pending',
+            'assert',
+            'eq',
+          },
           workspace = {
             -- index all of your config
             library = {
