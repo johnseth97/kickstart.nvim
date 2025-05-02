@@ -1,6 +1,7 @@
+
 ---
-# .github/workflows/pages.yml
-name: Deploy Interactive Bloat Analysis
+# .github/workflows/bloat-analyze.yml
+name: Update Neovim “Bloat” Analysis
 
 on:
   push:
@@ -8,25 +9,23 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish:
+  analyze:
     runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repo
+        uses: actions/checkout@v4
 
-      - name: Install deps
+      - name: Install prerequisites
         run: |
           sudo apt-get update
           sudo apt-get install -y neovim nodejs npm
           npm install -g puppeteer
 
-      - name: Run bloat.nvim
+      - name: Run bloat.nvim headless
         run: |
-          nvim --headless -u minimal_init.lua \
-            +':silent! Bloat $PWD/analysis.json' \
+          nvim --headless \
+            -u minimal_init.lua \
+            +':silent! Bloat' \
             +qa
 
       - name: Clone esbuild Analyze UI
@@ -34,22 +33,30 @@ jobs:
           git clone --depth=1 \
             https://github.com/esbuild/esbuild.github.io.git esbuild-ui
 
-      - name: Prepare public folder
+      - name: Prepare GitHub Pages content
         run: |
-          mkdir -p public/analyze
-          cp -R esbuild-ui/src/analyze/* public/analyze/
-          mv analysis.json public/analyze/metafile.json
-          # inject the fetch→analyzeMetafile hack if you need it
-          sed -i '' \
-            's|<input type="file"|<script>fetch("metafile.json")\
-               .then(r=>r.json())\
-               .then(data=>analyzeMetafile(data,"chartPanel"));\
-             </script><input type="file"|' \
-            public/analyze/index.html
+          # Clean out old build
+          rm -rf docs/analyze
+          mkdir -p docs/analyze
 
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+          # Copy in the UI
+          cp -R esbuild-ui/src/analyze/* docs/analyze/
+
+          # Copy your analysis JSON
+          cp ~/nvim-bloat-analysis.json docs/analyze/metafile.json
+
+          # Inject auto-load script so the page renders immediately
+          sed -i '' \
+            's|<input type="file" id="fileInput"|<script>fetch("metafile.json")\
+               .then(r=>r.json())\
+               .then(data=>analyzeMetafile(data, "chartPanel"))\
+               .catch(console.error);</script>\
+             <input type="file" id="fileInput"|' \
+            docs/analyze/index.html
+
+      - name: Commit updated Pages files
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          path: public
-      - uses: actions/deploy-pages@v4
+          commit_message: "ci: update bloat analysis UI"
+          file_pattern: docs/analyze/**
 ...
