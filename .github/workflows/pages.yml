@@ -1,12 +1,19 @@
 ---
 # .github/workflows/pages.yml
-on: [push, workflow_dispatch]
+name: Deploy Interactive Bloat Analysis
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
       pages: write
       id-token: write
+
     steps:
       - uses: actions/checkout@v4
 
@@ -17,19 +24,27 @@ jobs:
           npm install -g puppeteer
 
       - name: Run bloat.nvim
-        run: nvim --headless -u minimal_init.lua +':silent! Bloat $PWD/analysis.json' +qa
-
-      - name: Prepare analyze UI
         run: |
-          git clone --depth=1 https://github.com/esbuild/esbuild.github.io.git esbuild-ui
+          nvim --headless -u minimal_init.lua \
+            +':silent! Bloat $PWD/analysis.json' \
+            +qa
+
+      - name: Clone esbuild Analyze UI
+        run: |
+          git clone --depth=1 \
+            https://github.com/esbuild/esbuild.github.io.git esbuild-ui
+
+      - name: Prepare public folder
+        run: |
           mkdir -p public/analyze
           cp -R esbuild-ui/src/analyze/* public/analyze/
-          cp analysis.json public/analyze/metafile.json
+          mv analysis.json public/analyze/metafile.json
+          # inject the fetch→analyzeMetafile hack if you need it
           sed -i '' \
-            's|<input type="file" id="fileInput"|<script>fetch("metafile.json")\
+            's|<input type="file"|<script>fetch("metafile.json")\
                .then(r=>r.json())\
-               .then(data=>analyzeMetafile(data, "chartPanel"));\
-             </script><input type="file" id="fileInput"|' \
+               .then(data=>analyzeMetafile(data,"chartPanel"));\
+             </script><input type="file"|' \
             public/analyze/index.html
 
       - uses: actions/configure-pages@v5
