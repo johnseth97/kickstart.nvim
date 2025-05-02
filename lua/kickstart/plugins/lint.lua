@@ -15,6 +15,7 @@ return {
         javascript = { 'eslint' },
         javascriptreact = { 'eslint' },
         typescriptreact = { 'eslint' },
+        jsonn = { 'eslint' },
       }
 
       -- Override luacheck to recognize `vim` and other globals
