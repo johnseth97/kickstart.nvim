@@ -24,9 +24,9 @@ jobs:
       - name: Run bloat.nvim headless
         run: |
           nvim --headless \
-            -u minimal_init.lua \
-            +':silent! Bloat' \
-            +qa
+            -u gh_actions_init.lua \
+            -c 'lua require("lazy").sync()' \
+            -c 'Bloat'
 
       - name: Clone esbuild Analyze UI
         run: |
