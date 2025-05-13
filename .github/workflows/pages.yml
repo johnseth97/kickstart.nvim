@@ -1,0 +1,62 @@
+
+---
+# .github/workflows/bloat-analyze.yml
+name: Update Neovim “Bloat” Analysis
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Install prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y neovim nodejs npm
+          npm install -g puppeteer
+
+      - name: Run bloat.nvim headless
+        run: |
+          nvim --headless \
+            -u gh_actions_init.lua \
+            -c 'lua require("lazy").sync()' \
+            -c 'Bloat'
+
+      - name: Clone esbuild Analyze UI
+        run: |
+          git clone --depth=1 \
+            https://github.com/esbuild/esbuild.github.io.git esbuild-ui
+
+      - name: Prepare GitHub Pages content
+        run: |
+          # Clean out old build
+          rm -rf docs/analyze
+          mkdir -p docs/analyze
+
+          # Copy in the UI
+          cp -R esbuild-ui/src/analyze/* docs/analyze/
+
+          # Copy your analysis JSON
+          cp ~/nvim-bloat-analysis.json docs/analyze/metafile.json
+
+          # Inject auto-load script so the page renders immediately
+          sed -i '' \
+            's|<input type="file" id="fileInput"|<script>fetch("metafile.json")\
+               .then(r=>r.json())\
+               .then(data=>analyzeMetafile(data, "chartPanel"))\
+               .catch(console.error);</script>\
+             <input type="file" id="fileInput"|' \
+            docs/analyze/index.html
+
+      - name: Commit updated Pages files
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "ci: update bloat analysis UI"
+          file_pattern: docs/analyze/**
+...
