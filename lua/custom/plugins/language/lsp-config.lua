@@ -15,6 +15,8 @@ return {
     'css',
     'json',
     'yaml',
+    'markdown',
+    'md',
   },
   dependencies = {
     { 'hrsh7th/cmp-nvim-lsp', event = 'InsertEnter' },
