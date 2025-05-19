@@ -1,8 +1,7 @@
 return {
   'johnseth97/gh-dash.nvim',
-  dir = '~/src/Lua/gh-dash.nvim/',
-  as = 'gh-dash.nvim',
   lazy = true,
+  cmd = { 'GHdash', 'GHdashToggle' },
   keys = {
     {
       '<leader>gd',
