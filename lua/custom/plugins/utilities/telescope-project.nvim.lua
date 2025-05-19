@@ -6,7 +6,7 @@ return {
     require('telescope').setup {
       extensions = {
         project = {
-          base_dirs = { { '~/src', max_depth = 2 } },
+          base_dirs = { { '~/src', max_depth = 3 } },
           hidden_files = true,
           respect_gitignore = false,
           order_by = 'asc',

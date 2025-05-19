@@ -23,3 +23,43 @@ vim.keymap.set('n', '<C-j>', '<C-w>h', { noremap = true, desc = 'Move focus to t
 vim.keymap.set('n', '<C-k>', '<C-w>j', { noremap = true, desc = 'Move focus to the bottom split' })
 vim.keymap.set('n', '<C-l>', '<C-w>k', { noremap = true, desc = 'Move focus to the top split' })
 vim.keymap.set('n', '<C-;>', '<C-w>l', { noremap = true, desc = 'Move focus to the right split' })
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'DiffviewFiles', 'DiffviewFileHistory', 'DiffviewPanel', 'diff', 'NvimTree' },
+  callback = function()
+    local opts = { buffer = true, noremap = true, desc = 'Remap navigation for Diffview buffers' }
+
+    -- Navigation
+    vim.keymap.set('n', 'j', 'h', opts)
+    vim.keymap.set('n', 'k', 'j', opts)
+    vim.keymap.set('n', 'l', 'k', opts)
+    vim.keymap.set('n', ';', 'l', opts)
+
+    -- Window switching (optional)
+    vim.keymap.set('n', '<C-j>', '<C-w>h', opts)
+    vim.keymap.set('n', '<C-k>', '<C-w>j', opts)
+    vim.keymap.set('n', '<C-l>', '<C-w>k', opts)
+    vim.keymap.set('n', '<C-;>', '<C-w>l', opts)
+  end,
+})
+
+vim.api.nvim_create_autocmd('OptionSet', {
+  pattern = 'diff',
+  callback = function()
+    if vim.opt.diff:get() then
+      local opts = { buffer = true, noremap = true }
+
+      -- Movement remaps
+      vim.keymap.set('n', 'j', 'h', opts)
+      vim.keymap.set('n', 'k', 'j', opts)
+      vim.keymap.set('n', 'l', 'k', opts)
+      vim.keymap.set('n', ';', 'l', opts)
+
+      -- Window navigation
+      vim.keymap.set('n', '<C-j>', '<C-w>h', opts)
+      vim.keymap.set('n', '<C-k>', '<C-w>j', opts)
+      vim.keymap.set('n', '<C-l>', '<C-w>k', opts)
+      vim.keymap.set('n', '<C-;>', '<C-w>l', opts)
+    end
+  end,
+})

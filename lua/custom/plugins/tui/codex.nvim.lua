@@ -1,5 +1,6 @@
 return {
-  'johnseth97/codex.nvim',
+  dir = '~/src/Lua/codex.nvim',
+  dev = true,
   lazy = true,
   keys = {
     {

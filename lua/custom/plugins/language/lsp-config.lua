@@ -14,6 +14,7 @@ return {
     'html',
     'css',
     'json',
+    'yaml',
   },
   dependencies = {
     { 'hrsh7th/cmp-nvim-lsp', event = 'InsertEnter' },
@@ -98,6 +99,28 @@ return {
           client.server_capabilities.documentFormattingProvider = false
         end,
         capabilities = capabilities,
+      },
+      gh_actions_ls = {
+        cmd = { 'gh-actions-language-server', '--stdio' },
+        filetypes = { 'yaml.github' },
+        root_dir = lspconfig.util.root_pattern '.github',
+        single_file_support = true,
+        capabilities = capabilities,
+        workspace = {
+          didChangeWorkspaceFolders = {
+            dynamicRegistration = true,
+          },
+        },
+        docs = {
+          description = [[
+            https://github.com/lttb/gh-actions-language-server
+            Language server for GitHub Actions.
+            `gh-actions-language-server` can be installed via `npm`:
+            ```sh
+            npm install -g gh-actions-language-server
+            ```
+            ]],
+        },
       },
       -- lua_ls is done above
     }

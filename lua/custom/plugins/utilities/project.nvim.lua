@@ -9,7 +9,7 @@ return {
       detection_methods = { 'pattern' },
       patterns = { '.git' },
       base_dirs = {
-        { '~/src', max_depth = 2 },
+        { '~/src/', max_depth = 2 },
         { '~/.dotfiles/', max_depth = 1 },
         { '~/.dotfiles/.config/nvim/', max_depth = 1 },
       },

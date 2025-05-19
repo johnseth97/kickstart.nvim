@@ -1,6 +1,21 @@
 -- init.lua (or wherever you call require('lazy').setup)
 require('lazy').setup {
   spec = {
+	  {
+  'catppuccin/nvim',
+  name = 'catppuccin',
+  priority = 1000,
+  lazy = false,
+  opts = {
+    transparent_background = true,
+    flavour = 'macchiato',
+  },
+  config = function(_, opts)
+    require('catppuccin').setup(opts)
+    vim.cmd.colorscheme 'catppuccin-macchiato'
+    vim.cmd.hi 'Comment gui=none'
+  end,
+},
     -- 1) Mason & friends first, on the same early file-open events
     {
       'williamboman/mason.nvim',
@@ -56,7 +71,7 @@ require('lazy').setup {
   -- keep your other top-level settings unchanged:
   root = vim.fn.stdpath 'data' .. '/lazy',
   defaults = { lazy = true },
-  install = { missing = true, colorscheme = { 'catppuccin', 'tokyonight' } },
+  install = { missing = true, colorscheme = { 'catppuccin' },},
   lockfile = vim.fn.stdpath 'data' .. '/lazy-lock.json',
   git = { timeout = 120, url_format = 'https://github.com/%s.git' },
   checker = { enabled = true },

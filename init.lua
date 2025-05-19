@@ -57,6 +57,8 @@ require 'autocommands'
 -- johnseth97
 require 'usercommands'
 
+require 'ftdetect.github-actions'
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 require 'lazy-bootstrap'
