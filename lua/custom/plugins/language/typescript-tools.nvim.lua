@@ -1,6 +1,13 @@
 return {
   'pmizio/typescript-tools.nvim',
   dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
+  languages = {
+    'javascript',
+    'typescript',
+    'javascriptreact',
+    'typescriptreact',
+    'json',
+  },
 
   -- Automatically toggle off typescript-tools when in a Deno project
   ft = function()

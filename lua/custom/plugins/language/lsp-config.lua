@@ -1,81 +1,49 @@
 return {
   'neovim/nvim-lspconfig',
-  ft = {
-    'c',
-    'cpp',
-    'lua',
-    'python',
-    'javascript',
-    'typescript',
-    'rust',
-    'go',
-    'sh',
-    'bash',
-    'html',
-    'css',
-    'json',
-    'yaml',
-    'markdown',
-    'md',
-  },
+  event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {
-    { 'hrsh7th/cmp-nvim-lsp', event = 'InsertEnter' },
+    'williamboman/mason.nvim',
+    'williamboman/mason-lspconfig.nvim',
+    'hrsh7th/cmp-nvim-lsp',
   },
   config = function()
     local lspconfig = require 'lspconfig'
+    local mason_lspconfig = require 'mason-lspconfig'
     local cmp_nvim_lsp = require 'cmp_nvim_lsp'
 
-    -- detect both your "real" config path and stdpath('config')
+    local capabilities = vim.tbl_deep_extend('force', vim.lsp.protocol.make_client_capabilities(), cmp_nvim_lsp.default_capabilities())
+
     local std_cfg = vim.fn.stdpath 'config'
     local dotcfg = vim.fn.expand '~/.dotfiles/.config/nvim'
 
-    -- Setup LuaLS
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities = vim.tbl_deep_extend('force', capabilities, cmp_nvim_lsp.default_capabilities())
-
-    lspconfig.lua_ls.setup {
-      capabilities = capabilities,
-      settings = {
-        Lua = {
-          runtime = {
-            version = 'LuaJIT',
-            path = vim.split(package.path, ';'),
-          },
-          diagnostics = {
-            globals = { 'vim', 'describe', 'it', 'before_each', 'after_each', 'pending', 'assert', 'eq' },
-            disable = { 'lowercase-global' },
-          },
-          workspace = {
-            -- index all of your config
-            library = {
-              [std_cfg .. '/lua'] = true,
-              [dotcfg .. '/lua'] = true,
-              -- if you have lua/custom
-              [dotcfg .. '/lua/custom'] = true,
-              -- index lazy.nvim itself so you can jump into its source
-              [vim.fn.stdpath 'data' .. '/lazy/lazy.nvim/lua'] = true,
+    local servers = {
+      lua_ls = {
+        settings = {
+          Lua = {
+            runtime = {
+              version = 'LuaJIT',
+              path = vim.split(package.path, ';'),
             },
-            checkThirdParty = false,
+            diagnostics = {
+              globals = { 'vim' },
+              disable = { 'lowercase-global' },
+            },
+            workspace = {
+              library = {
+                [std_cfg .. '/lua'] = true,
+                [dotcfg .. '/lua'] = true,
+                [dotcfg .. '/lua/custom'] = true,
+                [vim.fn.stdpath 'data' .. '/lazy/lazy.nvim/lua'] = true,
+              },
+              checkThirdParty = false,
+            },
+            completion = { callSnippet = 'Replace' },
+            telemetry = { enable = false },
           },
-          completion = { callSnippet = 'Replace' },
-          telemetry = { enable = false },
         },
       },
-    }
-
-    -- Your other servers
-    local servers = {
       clangd = {
         cmd = { 'clangd', '--compile-commands-dir=.' },
-        capabilities = capabilities,
-        settings = {
-          clangd = {
-            args = {
-              '-I/opt/homebrew/Cellar/GMP/6.3.0/include',
-              '-L/opt/homebrew/Cellar/GMP/6.3.0/lib',
-            },
-          },
-        },
       },
       denols = {
         root_dir = lspconfig.util.root_pattern('deno.json', 'deno.jsonc'),
@@ -83,16 +51,7 @@ return {
           enable = true,
           lint = true,
           unstable = true,
-          suggest = {
-            imports = {
-              hosts = {
-                ['https://deno.land'] = true,
-                ['https://esm.sh'] = true,
-              },
-            },
-          },
         },
-        capabilities = capabilities,
       },
       eslint = {
         root_dir = lspconfig.util.root_pattern('.eslintrc', '.eslintrc.js', '.eslintrc.json'),
@@ -100,39 +59,24 @@ return {
         on_attach = function(client)
           client.server_capabilities.documentFormattingProvider = false
         end,
-        capabilities = capabilities,
       },
-      gh_actions_ls = {
-        cmd = { 'gh-actions-language-server', '--stdio' },
-        filetypes = { 'yaml.github' },
-        root_dir = lspconfig.util.root_pattern '.github',
-        single_file_support = true,
-        capabilities = capabilities,
-        workspace = {
-          didChangeWorkspaceFolders = {
-            dynamicRegistration = true,
-          },
-        },
-        docs = {
-          description = [[
-            https://github.com/lttb/gh-actions-language-server
-            Language server for GitHub Actions.
-            `gh-actions-language-server` can be installed via `npm`:
-            ```sh
-            npm install -g gh-actions-language-server
-            ```
-            ]],
-        },
-      },
-      -- lua_ls is done above
     }
 
-    -- Actually iterate and setup each server
-    for name, opts in pairs(servers) do
-      lspconfig[name].setup(opts)
+    -- 🛠 Explicit setup — this is what prevents "attach everything"
+    mason_lspconfig.setup {
+      ensure_installed = vim.tbl_keys(servers),
+      automatic_installation = true, -- 🔴 IMPORTANT!
+      automatic_enable = false,
+      automatic_setup = false,
+    }
+
+    -- manually wire up only the defined servers
+    for server_name, opts in pairs(servers) do
+      opts.capabilities = vim.tbl_deep_extend('force', {}, capabilities, opts.capabilities or {})
+      lspconfig[server_name].setup(opts)
     end
 
-    -- LspAttach keymaps (unchanged)
+    -- Keymaps
     vim.api.nvim_create_autocmd('LspAttach', {
       group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
       callback = function(ev)
@@ -141,12 +85,10 @@ return {
           mode = mode or 'n'
           vim.keymap.set(mode, keys, fn, { buffer = buf, desc = 'LSP: ' .. desc })
         end
-
         map('gd', require('telescope.builtin').lsp_definitions, '[G]oto Definition')
         map('gr', require('telescope.builtin').lsp_references, '[G]oto References')
         map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
         map('<leader>ca', vim.lsp.buf.code_action, '[C]ode Action')
-        -- add any others you like…
       end,
     })
   end,

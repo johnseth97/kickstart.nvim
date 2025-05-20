@@ -1,6 +1,6 @@
 return {
   'sphamba/smear-cursor.nvim',
-  lazy = false,
+  lazy = true,
 
   opts = {
     -- Smear cursor color. Defaults to Cursor GUI color if not set.
