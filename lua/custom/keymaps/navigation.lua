@@ -63,3 +63,26 @@ vim.api.nvim_create_autocmd('OptionSet', {
     end
   end,
 })
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'man',
+  callback = function()
+    local opts = { buffer = true, noremap = true, desc = 'Remap man navigation' }
+
+    vim.keymap.set({ 'n', 'o' }, 'j', 'h', opts)
+    vim.keymap.set({ 'n', 'o' }, 'k', 'j', opts)
+    vim.keymap.set({ 'n', 'o' }, 'l', 'k', opts)
+    vim.keymap.set({ 'n', 'o' }, ';', 'l', opts)
+
+    vim.keymap.set({ 'v', 'o' }, 'j', 'h', opts)
+    vim.keymap.set({ 'v', 'o' }, 'k', 'j', opts)
+    vim.keymap.set({ 'v', 'o' }, 'l', 'k', opts)
+    vim.keymap.set({ 'v', 'o' }, ';', 'l', opts)
+
+    -- Optional split nav
+    vim.keymap.set('n', '<C-j>', '<C-w>h', opts)
+    vim.keymap.set('n', '<C-k>', '<C-w>j', opts)
+    vim.keymap.set('n', '<C-l>', '<C-w>k', opts)
+    vim.keymap.set('n', '<C-;>', '<C-w>l', opts)
+  end,
+})
