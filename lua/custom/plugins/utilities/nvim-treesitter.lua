@@ -32,17 +32,17 @@ return {
       -- 1) Standard TS setup:
       require('nvim-treesitter.configs').setup(opts)
 
-      -- 2) Whenever any window-option 'diff' changes, stop TS in that buffer:
-      vim.api.nvim_create_autocmd('OptionSet', {
-        pattern = 'diff',
-        callback = function(args)
-          local bufnr = args.buf
-          if vim.api.nvim_buf_get_option(bufnr, 'filetype') ~= '' and vim.wo[args.win].diff then
-            -- stop the highlighter for this buffer
-            require('vim.treesitter.highlighter').stop(bufnr)
-          end
-        end,
-      })
+      -- -- 2) Whenever any window-option 'diff' changes, stop TS in that buffer:
+      -- vim.api.nvim_create_autocmd('OptionSet', {
+      --   pattern = 'diff',
+      --   callback = function(args)
+      --     local bufnr = args.buf
+      --     if vim.api.nvim_buf_get_option(bufnr, 'filetype') ~= '' and vim.wo[args.win].diff then
+      --       -- stop the highlighter for this buffer
+      --       require('vim.treesitter.highlighter').stop(bufnr)
+      --     end
+      --   end,
+      -- })
     end,
   },
 }
