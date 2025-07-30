@@ -56,16 +56,8 @@ return {
       end,
     },
 
-    -- 2) Go adapter
-    {
-      'leoluz/nvim-dap-go',
-      ft = 'go',
-      config = function()
-        require('dap-go').setup { delve = { detached = vim.fn.has 'win32' == 0 } }
-      end,
-    },
+    -- 1) Mason integration for DAP adapters
 
-    -- 3) Mason integration for DAP adapters
     {
       'jay-babu/mason-nvim-dap.nvim',
       after = 'nvim-dap',
@@ -78,7 +70,49 @@ return {
       end,
     },
 
+    -- 2) Go adapter
+    {
+      'leoluz/nvim-dap-go',
+      ft = 'go',
+      config = function()
+        require('dap-go').setup { delve = { detached = vim.fn.has 'win32' == 0 } }
+      end,
+    },
+
     -- 5) Some extra helper you had in your deps
     'nvim-neotest/nvim-nio',
   },
+
+  config = function()
+    local dap = require 'dap'
+
+    -- 1) codelldb adapter
+    dap.adapters.codelldb = {
+      type = 'server',
+      port = '${port}',
+      executable = {
+        command = 'codelldb', -- comes from mason
+        args = { '--port', '${port}' },
+      },
+    }
+
+    -- 2) Launch configuration for C
+    dap.configurations.c = {
+      {
+        name = 'Launch boxflow',
+        type = 'codelldb',
+        request = 'launch',
+        program = function()
+          return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/build/boxflow', 'file')
+        end,
+        cwd = '${workspaceFolder}',
+        stopOnEntry = false,
+        args = {},
+        runInTerminal = false,
+      },
+    }
+
+    -- 3) Reuse the same for C++
+    dap.configurations.cpp = dap.configurations.c
+  end,
 }
