@@ -1,44 +1,51 @@
 -- lua/custom/plugins/tui/bufferline-nvim.lua
 return {
   'akinsho/bufferline.nvim',
-  dependencies = { 'nvim-tree/nvim-web-devicons' },
-  -- fire this right after UIEnter, once all the core startup is done
+  dependencies = { 'nvim-tree/nvim-web-devicons', 'folke/tokyonight.nvim' },
   event = 'BufReadPost',
-
-  -- all of your `setup { … }` table goes here
   opts = function()
-    -- make sure termguicolors is set before bufferline draws
-    vim.opt.termguicolors = true
+    -- pull theme-provided highlights (respects transparent=true)
+    local ok, integ = pcall(require, 'tokyonight.groups.integrations.bufferline')
+    local highlights = ok and integ.get()
+      or {
+        -- fallback: force transparent if integration not found
+        fill = { bg = 'NONE' },
+        background = { bg = 'NONE' },
+        separator = { fg = 'NONE', bg = 'NONE' },
+        separator_visible = { fg = 'NONE', bg = 'NONE' },
+        separator_selected = { fg = 'NONE', bg = 'NONE' },
+        buffer_selected = { bg = 'NONE', bold = true },
+        indicator_selected = { bg = 'NONE' },
+        modified = { bg = 'NONE' },
+        modified_selected = { bg = 'NONE' },
+        close_button = { bg = 'NONE' },
+        close_button_selected = { bg = 'NONE' },
+      }
 
-    local cp = require('catppuccin.palettes').get_palette 'macchiato'
     return {
       options = {
-        -- your other options…
         style_preset = require('bufferline').style_preset.minimal,
-        numbers = function(o)
-          return string.format('%s', o.ordinal) .. ' '
-        end,
         always_show_bufferline = true,
         show_bufferline_when_empty = true,
       },
       highlights = {
-        fill = { bg = cp.mantle },
-        background = { bg = cp.mantle, fg = cp.surface1 },
-        buffer_selected = { fg = cp.green, bg = cp.base, bold = true },
-        indicator_selected = { fg = cp.green, bg = cp.base },
-        numbers = { fg = cp.peach, bg = cp.mantle },
-        numbers_selected = { fg = cp.green, bg = cp.base, bold = true },
-        separator = { fg = cp.mantle, bg = cp.mantle },
-        separator_visible = { fg = cp.mantle, bg = cp.mantle },
-        separator_selected = { fg = cp.base, bg = cp.base },
-        close_button = { fg = cp.mantle, bg = cp.mantle },
-        close_button_visible = { fg = cp.mantle, bg = cp.mantle },
-        close_button_selected = { fg = cp.base, bg = cp.base },
-        modified = { fg = cp.peach, bg = cp.mantle },
-        modified_selected = { fg = cp.green, bg = cp.base },
-        duplicate = { fg = cp.overlay0, bg = cp.mantle, italic = true },
-        duplicate_selected = { fg = cp.green, bg = cp.base, italic = true },
+        fill = { bg = 'NONE' },
+        background = { bg = 'NONE' },
+        tab = { bg = 'NONE' },
+        tab_selected = { bg = 'NONE' },
+        tab_close = { bg = 'NONE' },
+        close_button = { bg = 'NONE' },
+        close_button_visible = { bg = 'NONE' },
+        close_button_selected = { bg = 'NONE' },
+        buffer_visible = { bg = 'NONE' },
+        buffer_selected = { bg = 'NONE' },
+        separator = { bg = 'NONE' },
+        separator_selected = { bg = 'NONE' },
+        separator_visible = { bg = 'NONE' },
+        modified = { bg = 'NONE' },
+        modified_visible = { bg = 'NONE' },
+        modified_selected = { bg = 'NONE' },
       },
     }
   end,
-} -- lua/custom/plugins/tui/bufferline-nvim.lua
+}

@@ -30,6 +30,24 @@ return {
         pickers = {},
       }
 
+      -- Make Telescope transparent
+      local function set_transparent_telescope()
+        local hl = vim.api.nvim_set_hl
+        hl(0, 'TelescopeNormal', { bg = 'NONE' })
+        hl(0, 'TelescopeBorder', { bg = 'NONE' })
+        hl(0, 'TelescopePromptNormal', { bg = 'NONE' })
+        hl(0, 'TelescopePromptBorder', { bg = 'NONE' })
+        hl(0, 'TelescopePreviewNormal', { bg = 'NONE' })
+        hl(0, 'TelescopePreviewBorder', { bg = 'NONE' })
+        hl(0, 'TelescopeResultsNormal', { bg = 'NONE' })
+        hl(0, 'TelescopeResultsBorder', { bg = 'NONE' })
+      end
+      -- Apply immediately and whenever the colorscheme changes
+      set_transparent_telescope()
+      vim.api.nvim_create_autocmd('ColorScheme', {
+        callback = set_transparent_telescope,
+      })
+
       pcall(telescope.load_extension, 'fzf')
       pcall(telescope.load_extension, 'ui-select')
 
@@ -112,7 +130,7 @@ return {
     config = function()
       require('telescope').load_extension 'project'
     end,
-    cmd = 'Telescope', -- Only loads when :Telescope is triggered
+    cmd = 'Telescope',
   },
 
   { -- Telescope File Browser Extension
@@ -121,6 +139,6 @@ return {
     config = function()
       require('telescope').load_extension 'file_browser'
     end,
-    cmd = 'Telescope', -- Only loads when :Telescope is triggered
+    cmd = 'Telescope',
   },
 }

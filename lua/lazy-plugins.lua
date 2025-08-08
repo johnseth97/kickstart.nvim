@@ -5,17 +5,17 @@ local lazy_config = {
   end,
   spec = {
     {
-      'catppuccin/nvim',
-      name = 'catppuccin',
+      'folke/tokyonight.nvim',
+      name = 'tokyonight',
       priority = 1000,
       lazy = false,
       opts = {
-        transparent_background = true,
-        flavour = 'macchiato',
+        style = 'storm',
+        transparent = true,
       },
       config = function(_, opts)
-        require('catppuccin').setup(opts)
-        vim.cmd.colorscheme 'catppuccin-macchiato'
+        require('tokyonight').setup(opts)
+        vim.cmd.colorscheme 'tokyonight'
         vim.cmd.hi 'Comment gui=none'
       end,
     },
@@ -65,7 +65,7 @@ local lazy_config = {
 
   root = vim.fn.stdpath 'data' .. '/lazy',
   defaults = { lazy = true },
-  install = { missing = true, colorscheme = { 'catppuccin' } },
+  install = { missing = true, colorscheme = { 'tokyonight' } },
   lockfile = vim.fn.stdpath 'data' .. '/lazy-lock.json',
   git = {
     timeout = 120,
