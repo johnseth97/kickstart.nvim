@@ -1,5 +1,4 @@
 -- /lua/custom/plugins/tui/dashboard-nvim.lua
-
 return {
   {
     'nvimdev/dashboard-nvim',
