@@ -41,7 +41,7 @@ return {
           lualine_a = { 'mode' },
           lualine_b = { 'branch', 'diff', 'diagnostics' },
           lualine_c = { 'filename', 'filesize' },
-          lualine_x = { 'encoding', require('codex').status() },
+          lualine_x = { 'encoding', require('codex').status(), require('easy-dotnet.ui-modules.jobs').lualine },
           lualine_y = { 'progress' },
           lualine_z = { custom_location },
         }
