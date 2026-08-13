@@ -6,7 +6,7 @@
 -- Otherwise, it won't be able to capture the events
 if vim.env.PROF then
   local snacks = vim.fn.stdpath 'data' .. '/lazy/snacks.nvim'
-  vim.opt.rtp:append(snacks)
+  vim.opt.rtp = vim.opt.rtp + snacks
 
   require('snacks.profiler').startup {
     startup = {

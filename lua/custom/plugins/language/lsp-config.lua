@@ -32,6 +32,8 @@ return {
             },
             workspace = {
               library = {
+                -- Neovim's API type annotations (e.g. vim.opt.rtp:append()).
+                [vim.env.VIMRUNTIME] = true,
                 [std_cfg .. '/lua'] = true,
                 [dotcfg .. '/lua'] = true,
                 [dotcfg .. '/lua/custom'] = true,
