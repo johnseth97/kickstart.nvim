@@ -1,14 +1,4 @@
 -- lua/custom/plugins/dotnet.lua
-local on_attach = function(client, bufnr)
-  local bufmap = function(mode, lhs, rhs, desc)
-    vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
-  end
-  bufmap('n', '<leader>dr', require('dap').continue, 'DAP: Continue')
-  bufmap('n', '<leader>db', require('dap').toggle_breakpoint, 'DAP: Toggle Breakpoint')
-  bufmap('n', '<leader>dso', require('dap').step_over, 'DAP: Step Over')
-  bufmap('n', '<leader>dsi', require('dap').step_into, 'DAP: Step Into')
-end
-
 return {
   'GustavEikaas/easy-dotnet.nvim',
   ft = { 'cs', 'fs', 'vb' },
@@ -26,31 +16,13 @@ return {
       background_scanning = false,
     }
 
-    -- 2) Mason + LSP
+    -- 2) Ensure OmniSharp is installed via Mason (LSP setup is done in lsp-config.lua)
     require('mason').setup()
-    require('mason-lspconfig').setup { ensure_installed = { 'omnisharp' } }
-
-    -- Pin the capital-O “OmniSharp” binary that Mason put in stdpath("data")/mason/bin
-    local mason_bin = vim.fn.stdpath 'data' .. '/mason/bin'
-    local omnisharp_ex = mason_bin .. '/OmniSharp'
-
-    local lspconfig = require 'lspconfig'
-    lspconfig.omnisharp.setup {
-      cmd = { omnisharp_ex, '--languageserver', '--hostPID', tostring(vim.fn.getpid()) },
-      on_attach = on_attach,
-      flags = { debounce_text_changes = 150 },
-      root_dir = lspconfig.util.root_pattern('*.sln', '.git'),
-      settings = {
-        RoslynExtensionsOptions = {
-          enableAnalyzersSupport = true,
-          organizeImportsOnFormat = true,
-          organizeImportsOnSave = true,
-          logLevel = 'debug',
-        },
-        FormattingOptions = {
-          enableEditorConfigSupport = true,
-        },
-      },
+    require('mason-lspconfig').setup {
+      ensure_installed = { 'omnisharp' },
+      -- leave automatic_* false, you’re handling setup yourself in lsp-config.lua
+      automatic_installation = true,
+      automatic_setup = false,
     }
 
     -- 3) DAP for .NET Core via netcoredbg
@@ -71,8 +43,8 @@ return {
       },
     }
 
-    -- 4) (Optional) if you’d rather not hard-code omnisharp_ex,
-    --    add Mason’s bin to your shell PATH in ~/.zshrc:
-    --    export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
+    -- DAP keymaps are set via on_attach above; your central LSP config
+    -- should hook on_attach into omnisharp so they apply to C# buffers.
+    -- If not, you can move that on_attach into lsp-config.lua’s omnisharp entry.
   end,
 }

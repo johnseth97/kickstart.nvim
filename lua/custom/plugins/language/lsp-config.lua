@@ -7,10 +7,12 @@ return {
     'hrsh7th/cmp-nvim-lsp',
   },
   config = function()
-    local lspconfig = require 'lspconfig'
+    -- no more require('lspconfig') for setup; only for util
+    local util = require 'lspconfig.util'
     local mason_lspconfig = require 'mason-lspconfig'
     local cmp_nvim_lsp = require 'cmp_nvim_lsp'
 
+    -- capabilities
     local capabilities = vim.tbl_deep_extend('force', vim.lsp.protocol.make_client_capabilities(), cmp_nvim_lsp.default_capabilities())
 
     local std_cfg = vim.fn.stdpath 'config'
@@ -42,24 +44,28 @@ return {
           },
         },
       },
+
       clangd = {
         cmd = { 'clangd', '--compile-commands-dir=.' },
       },
+
       denols = {
-        root_dir = lspconfig.util.root_pattern('deno.json', 'deno.jsonc'),
+        root_dir = util.root_pattern('deno.json', 'deno.jsonc'),
         init_options = {
           enable = true,
           lint = true,
           unstable = true,
         },
       },
+
       eslint = {
-        root_dir = lspconfig.util.root_pattern('.eslintrc', '.eslintrc.js', '.eslintrc.json'),
+        root_dir = util.root_pattern('.eslintrc', '.eslintrc.js', '.eslintrc.json'),
         settings = { format = { enable = false } },
         on_attach = function(client)
           client.server_capabilities.documentFormattingProvider = false
         end,
       },
+
       omnisharp = {
         cmd = {
           vim.fn.stdpath 'data' .. '/mason/bin/omnisharp',
@@ -67,7 +73,7 @@ return {
           '--hostPID',
           tostring(vim.fn.getpid()),
         },
-        root_dir = require('lspconfig.util').root_pattern('*.sln', '*.csproj', '.git'),
+        root_dir = util.root_pattern('*.sln', '*.csproj', '.git'),
         enable_editorconfig_support = true,
         enable_ms_build_load_projects_on_demand = false,
         enable_roslyn_analyzers = true,
@@ -76,21 +82,29 @@ return {
       },
     }
 
-    -- 🛠 Explicit setup — this is what prevents "attach everything"
+    -- Mason: still just ensuring the servers exist
     mason_lspconfig.setup {
       ensure_installed = vim.tbl_keys(servers),
-      automatic_installation = true, -- 🔴 IMPORTANT!
+      automatic_installation = true,
       automatic_enable = false,
       automatic_setup = false,
     }
 
-    -- manually wire up only the defined servers
+    -- Global defaults for all servers we define
+    vim.lsp.config('*', {
+      capabilities = capabilities,
+    })
+
+    -- Per-server configs (merge in capabilities if needed)
     for server_name, opts in pairs(servers) do
       opts.capabilities = vim.tbl_deep_extend('force', {}, capabilities, opts.capabilities or {})
-      lspconfig[server_name].setup(opts)
+      vim.lsp.config(server_name, opts)
     end
 
-    -- Keymaps
+    -- Enable all configured servers (replaces lspconfig[server].setup)
+    vim.lsp.enable(vim.tbl_keys(servers))
+
+    -- Keymaps via LspAttach (unchanged)
     vim.api.nvim_create_autocmd('LspAttach', {
       group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
       callback = function(ev)
@@ -99,6 +113,7 @@ return {
           mode = mode or 'n'
           vim.keymap.set(mode, keys, fn, { buffer = buf, desc = 'LSP: ' .. desc })
         end
+
         map('gd', require('telescope.builtin').lsp_definitions, '[G]oto Definition')
         map('gr', require('telescope.builtin').lsp_references, '[G]oto References')
         map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')

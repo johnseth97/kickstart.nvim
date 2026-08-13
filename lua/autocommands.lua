@@ -24,14 +24,18 @@ vim.api.nvim_create_autocmd('VimEnter', {
   callback = function()
     local argv = vim.fn.argv()
     if #argv == 1 and vim.fn.isdirectory(argv[1]) == 1 then
-      vim.cmd('cd ' .. argv[1]) -- Set CWD to the opened directory
-      require('telescope.builtin').find_files {
-        prompt_title = 'Find File in ' .. argv[1],
-        cwd = argv[1],
-        hidden = true,
-        follow = true,
-        no_ignore = true,
-      }
+      local dir = vim.fn.fnamemodify(argv[1], ':p')
+      vim.fn.chdir(dir)
+
+      vim.schedule(function()
+        require('telescope.builtin').find_files {
+          prompt_title = 'Find File in ' .. argv[1],
+          cwd = dir, -- use the absolute dir you just chdir'd to
+          hidden = true,
+          follow = true,
+          no_ignore = true,
+        }
+      end)
     end
   end,
 })

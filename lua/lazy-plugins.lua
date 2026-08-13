@@ -66,7 +66,7 @@ local lazy_config = {
   root = vim.fn.stdpath 'data' .. '/lazy',
   defaults = { lazy = true },
   install = { missing = true, colorscheme = { 'tokyonight' } },
-  lockfile = vim.fn.stdpath 'data' .. '/lazy-lock.json',
+  lockfile = vim.fn.stdpath 'config' .. '/lazy-lock.json',
   git = {
     timeout = 120,
     url_format = 'https://github.com/%s.git',
