@@ -24,6 +24,17 @@ return {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
+          project = {
+            base_dirs = { { '~/src', max_depth = 3 } },
+            hidden_files = true,
+            respect_gitignore = false,
+            order_by = 'asc',
+            display_type = 'full',
+            hide_workspace = true,
+          },
+          file_browser = {
+            hijack_netrw = true,
+          },
         },
         defaults = {},
         pickers = {},
@@ -49,6 +60,8 @@ return {
 
       pcall(telescope.load_extension, 'fzf')
       pcall(telescope.load_extension, 'ui-select')
+      pcall(telescope.load_extension, 'project')
+      pcall(telescope.load_extension, 'file_browser')
 
       -- Optional: wrap search pickers
       local function make_toggleable(picker_fn)
@@ -126,18 +139,12 @@ return {
   { -- Telescope Project Extension
     'nvim-telescope/telescope-project.nvim',
     dependencies = { 'nvim-telescope/telescope.nvim' },
-    config = function()
-      require('telescope').load_extension 'project'
-    end,
     cmd = 'Telescope',
   },
 
   { -- Telescope File Browser Extension
     'nvim-telescope/telescope-file-browser.nvim',
     dependencies = { 'nvim-telescope/telescope.nvim' },
-    config = function()
-      require('telescope').load_extension 'file_browser'
-    end,
     cmd = 'Telescope',
   },
 }

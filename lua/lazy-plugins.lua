@@ -10,7 +10,7 @@ local lazy_config = {
       priority = 1000,
       lazy = false,
       opts = {
-        style = 'storm',
+        style = 'moon',
         transparent = true,
       },
       config = function(_, opts)

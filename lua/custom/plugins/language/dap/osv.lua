@@ -26,13 +26,10 @@ return {
         },
       }
 
-      -- Keymaps for launching & attaching
+      -- Launch the Neovim debug server. Use the global <F5> DAP binding to attach.
       vim.keymap.set('n', '<leader>dl', function()
         require('osv').launch { port = 8086 }
       end, { desc = 'DAP: Launch Neovim debug server' })
-      vim.keymap.set('n', '<leader>da', function()
-        require('dap').continue()
-      end, { desc = 'DAP: Attach to Neovim' })
     end,
   },
 }

@@ -1,0 +1,5 @@
+WRN 2026-08-13T01:29:37.912 ?.66238    server_start:197: Failed to start server: operation not permitted: /var/folders/z_/cc1f9c5n7zs7g5kh2mm3v9f40000gn/T/nvim.ejohnson/tHvEH1/nvim.66238.0
+WRN 2026-08-13T01:40:26.544 ?.84913    server_start:197: Failed to start server: operation not permitted: /var/folders/z_/cc1f9c5n7zs7g5kh2mm3v9f40000gn/T/nvim.ejohnson/Vfn3nO/nvim.84913.0
+WRN 2026-08-13T01:40:38.998 ?.85137    server_start:197: Failed to start server: operation not permitted: /var/folders/z_/cc1f9c5n7zs7g5kh2mm3v9f40000gn/T/nvim.ejohnson/GpF7jT/nvim.85137.0
+WRN 2026-08-13T01:40:39.014 ?.85136    server_start:197: Failed to start server: operation not permitted: /var/folders/z_/cc1f9c5n7zs7g5kh2mm3v9f40000gn/T/nvim.ejohnson/5pSnxk/nvim.85136.0
+WRN 2026-08-13T02:13:00.843 ?.21925    server_start:197: Failed to start server: operation not permitted: /var/folders/z_/cc1f9c5n7zs7g5kh2mm3v9f40000gn/T/nvim.ejohnson/Ufgosh/nvim.21925.0

@@ -20,7 +20,7 @@ return {
 
   opts = {},
   -- Config for: typescript-tools.nvim
-  setup = function()
+  config = function()
     require('typescript-tools').setup {
       settings = {
         -- spawn additional tsserver instance to calculate diagnostics on it
