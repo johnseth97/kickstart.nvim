@@ -52,7 +52,7 @@ return {
             group = 'Number',
             key = 'v',
             action = function()
-              local tgt = vim.fn.expand '~/.dotfiles/.config/nvim'
+              local tgt = vim.fn.expand '~/.dotfiles/common/.config/nvim'
               vim.cmd('cd ' .. tgt)
               require('telescope.builtin').find_files {
                 cwd = tgt,

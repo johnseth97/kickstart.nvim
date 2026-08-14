@@ -19,10 +19,16 @@ vim.keymap.set({ 'n', 'o' }, '<up>', '<cmd>echo "Use l to move!!"<CR>')
 vim.keymap.set({ 'n', 'o' }, '<down>', '<cmd>echo "Use k to move!!"<CR>')
 --
 -- Remap split navigation
-vim.keymap.set('n', '<C-j>', '<C-w>h', { noremap = true, desc = 'Move focus to the left split' })
-vim.keymap.set('n', '<C-k>', '<C-w>j', { noremap = true, desc = 'Move focus to the bottom split' })
-vim.keymap.set('n', '<C-l>', '<C-w>k', { noremap = true, desc = 'Move focus to the top split' })
-vim.keymap.set('n', '<C-;>', '<C-w>l', { noremap = true, desc = 'Move focus to the right split' })
+-- Keep native <C-w>{direction} commands aligned with the jkl; layout too.
+vim.keymap.set('n', '<C-w>j', '<C-w>h', { noremap = true, desc = 'Move focus left' })
+vim.keymap.set('n', '<C-w>k', '<C-w>j', { noremap = true, desc = 'Move focus down' })
+vim.keymap.set('n', '<C-w>l', '<C-w>k', { noremap = true, desc = 'Move focus up' })
+vim.keymap.set('n', '<C-w>;', '<C-w>l', { noremap = true, desc = 'Move focus right' })
+-- Move the current split using the same physical direction keys.
+vim.keymap.set('n', '<C-w>J', '<C-w>H', { noremap = true, desc = 'Move split left' })
+vim.keymap.set('n', '<C-w>K', '<C-w>J', { noremap = true, desc = 'Move split down' })
+vim.keymap.set('n', '<C-w>L', '<C-w>K', { noremap = true, desc = 'Move split up' })
+vim.keymap.set('n', '<C-w>:', '<C-w>L', { noremap = true, desc = 'Move split right' })
 
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'DiffviewFiles', 'DiffviewFileHistory', 'DiffviewPanel', 'diff', 'NvimTree' },
