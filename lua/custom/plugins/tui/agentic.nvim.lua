@@ -1,3 +1,10 @@
+local function capsule_header(window_name)
+  return function(parts, session_state)
+    local text = require('agentic.ui.window_decoration')._build_default_header(window_name, parts, session_state)
+    return '%#AgenticCapsuleEdge#%#AgenticCapsule# ' .. text .. ' %#AgenticCapsuleEdge#'
+  end
+end
+
 return {
   'carlos-algms/agentic.nvim',
   keys = {
@@ -72,9 +79,32 @@ return {
     provider_switcher = {
       hide_unhealthy_providers = true,
     },
+    headers = {
+      chat = capsule_header 'chat',
+      input = capsule_header 'input',
+      code = capsule_header 'code',
+      files = capsule_header 'files',
+      diagnostics = capsule_header 'diagnostics',
+      todos = capsule_header 'todos',
+    },
     windows = {
       position = 'right',
       width = '40%',
     },
   },
+  config = function(_, opts)
+    require('agentic').setup(opts)
+
+    local function apply_capsule_theme()
+      vim.api.nvim_set_hl(0, 'AgenticTitle', { fg = '#c0caf5', bold = true })
+      vim.api.nvim_set_hl(0, 'AgenticCapsule', { fg = '#c0caf5', bg = '#3b4261', bold = true })
+      vim.api.nvim_set_hl(0, 'AgenticCapsuleEdge', { fg = '#3b4261' })
+    end
+
+    apply_capsule_theme()
+    vim.api.nvim_create_autocmd('ColorScheme', {
+      group = vim.api.nvim_create_augroup('AgenticCapsuleTheme', { clear = true }),
+      callback = apply_capsule_theme,
+    })
+  end,
 }

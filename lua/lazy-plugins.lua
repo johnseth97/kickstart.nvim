@@ -14,9 +14,20 @@ local lazy_config = {
         transparent = true,
       },
       config = function(_, opts)
+        local function apply_ui_contrast()
+          local line_number = '#737aa2'
+          vim.api.nvim_set_hl(0, 'LineNr', { fg = line_number })
+          vim.api.nvim_set_hl(0, 'LineNrAbove', { fg = line_number })
+          vim.api.nvim_set_hl(0, 'LineNrBelow', { fg = line_number })
+        end
         require('tokyonight').setup(opts)
         vim.cmd.colorscheme 'tokyonight'
         vim.cmd.hi 'Comment gui=none'
+        apply_ui_contrast()
+        vim.api.nvim_create_autocmd('ColorScheme', {
+          group = vim.api.nvim_create_augroup('UserInterfaceContrast', { clear = true }),
+          callback = apply_ui_contrast,
+        })
       end,
     },
     {

@@ -3,6 +3,23 @@ return {
     'nvim-lualine/lualine.nvim',
     event = 'BufReadPost',
     opts = function(_, opts)
+      local capsule_theme = {
+        normal = {
+          a = { fg = '#1e2030', bg = '#7aa2f7', gui = 'bold' },
+          b = { fg = '#c0caf5', bg = '#3b4261' },
+          c = { fg = '#828bb8' },
+        },
+        insert = { a = { fg = '#1e2030', bg = '#9ece6a', gui = 'bold' } },
+        visual = { a = { fg = '#1e2030', bg = '#bb9af7', gui = 'bold' } },
+        replace = { a = { fg = '#1e2030', bg = '#f7768e', gui = 'bold' } },
+        command = { a = { fg = '#1e2030', bg = '#e0af68', gui = 'bold' } },
+        inactive = {
+          a = { fg = '#828bb8', bg = '#292e42' },
+          b = { fg = '#565f89', bg = '#292e42' },
+          c = { fg = '#565f89' },
+        },
+      }
+
       local function custom_location()
         local line = tonumber(vim.fn.line '.') or 0
         local total_lines = tonumber(vim.fn.line '$') or 0
@@ -10,12 +27,12 @@ return {
         local total_cols = (tonumber(vim.fn.col '$') or 1) - 1
         return string.format('[%d/%d] %d:%d', line, total_lines, col, total_cols)
       end
-      -- Set up default options for lualine
+
       opts.options = {
         icons_enabled = true,
-        theme = 'auto',
-        component_separators = { left = ' ', right = ' ' },
-        section_separators = { left = '', right = '' },
+        theme = capsule_theme,
+        component_separators = '',
+        section_separators = { left = '', right = '' },
         disabled_filetypes = {
           statusline = {},
           winbar = {},
@@ -35,35 +52,29 @@ return {
         },
       }
 
-      -- Define active sections
-      opts.sections = opts.sections
-        or {
-          lualine_a = { 'mode' },
-          lualine_b = { 'branch', 'diff', 'diagnostics' },
-          lualine_c = { 'filename', 'filesize' },
-          lualine_x = { 'encoding', require('codex').status(), require('easy-dotnet.ui-modules.jobs').lualine },
-          lualine_y = { 'progress' },
-          lualine_z = { custom_location },
-        }
+      opts.sections = {
+        lualine_a = { { 'mode', separator = { left = '' }, right_padding = 2 } },
+        lualine_b = { 'branch', 'diff', 'diagnostics' },
+        lualine_c = { 'filename', 'filesize' },
+        lualine_x = { 'encoding', require('codex').status(), require('easy-dotnet.ui-modules.jobs').lualine },
+        lualine_y = { 'progress' },
+        lualine_z = { { custom_location, separator = { right = '' }, left_padding = 2 } },
+      }
 
-      -- Define inactive sections
-      opts.inactive_sections = opts.inactive_sections
-        or {
-          lualine_a = {},
-          lualine_b = {},
-          lualine_c = { 'filename' },
-          lualine_x = { custom_location },
-          lualine_y = {},
-          lualine_z = {},
-        }
+      opts.inactive_sections = {
+        lualine_a = { { 'filename', separator = { left = '' }, right_padding = 2 } },
+        lualine_b = {},
+        lualine_c = {},
+        lualine_x = { custom_location },
+        lualine_y = {},
+        lualine_z = { { custom_location, separator = { right = '' }, left_padding = 2 } },
+      }
 
-      -- Define tabline and winbar sections
       opts.tabline = opts.tabline or {}
       opts.winbar = opts.winbar or {}
       opts.inactive_winbar = opts.inactive_winbar or {}
       opts.extensions = opts.extensions or {}
 
-      -- Add the Snacks profiler status to the `lualine_x` section
       table.insert(opts.sections.lualine_x, require('snacks.profiler').status())
     end,
   },
