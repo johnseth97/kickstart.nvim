@@ -8,6 +8,11 @@ return { -- Terminal Splits
     require('toggleterm').setup {
       direction = 'horizontal',
       start_in_insert = true,
+      -- ToggleTerm needs editor-style terminal keys, not Zsh's vi keymaps.
+      -- This reaches only the child process created by ToggleTerm.
+      env = {
+        DISABLE_TERM_VIM_MODE = '1',
+      },
     }
 
     -- load the helper

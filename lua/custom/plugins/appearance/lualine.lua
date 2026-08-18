@@ -34,8 +34,10 @@ return {
         component_separators = '',
         section_separators = { left = '', right = '' },
         disabled_filetypes = {
+          -- Agentic needs the winbar, while lualine provides its visible footers.
+          -- Disabling both leaves Neovim's bare, black default statuslines behind.
           statusline = {},
-          winbar = {},
+          winbar = { 'AgenticChat', 'AgenticInput', 'AgenticCode', 'AgenticFiles', 'AgenticDiagnostics', 'AgenticTodos' },
         },
         ignore_focus = {},
         always_divide_middle = true,
@@ -65,7 +67,7 @@ return {
         lualine_a = { { 'filename', separator = { left = '' }, right_padding = 2 } },
         lualine_b = {},
         lualine_c = {},
-        lualine_x = { custom_location },
+        lualine_x = {},
         lualine_y = {},
         lualine_z = { { custom_location, separator = { right = '' }, left_padding = 2 } },
       }

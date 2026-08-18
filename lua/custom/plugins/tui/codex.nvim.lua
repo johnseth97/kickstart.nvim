@@ -1,6 +1,7 @@
 return {
-  -- point to local version
-  dir = '~/src/lua/codex.nvim/',
+  -- Fetch the maintained personal upstream instead of a machine-local checkout.
+  'johnseth97/codex.nvim',
+  url = 'git@github-personal:johnseth97/codex.nvim.git',
   lazy = true,
   keys = {
     {

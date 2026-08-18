@@ -1,0 +1,8 @@
+vim.keymap.set('n', '<leader>A', function() require('agentic').toggle() end, { desc = 'Agent: Toggle panel' })
+vim.keymap.set('n', '<leader>aa', function() require('agentic').new_session_with_provider() end, { desc = 'Agent: New session (choose agent)' })
+vim.keymap.set({ 'n', 'v' }, '<leader>ai', function() require('agentic').add_selection_or_file_to_context() end, { desc = 'Agent: Add file or selection' })
+vim.keymap.set('n', '<leader>ah', function() require('custom.agent_history').pick() end, { desc = 'Agent: History' })
+vim.keymap.set('n', '<leader>aA', function() require('agentic').new_session { provider = 'claude-agent-acp' } end, { desc = 'Agent: Anthropic Claude' })
+vim.keymap.set('n', '<leader>aC', function() require('agentic').new_session { provider = 'codex-acp' } end, { desc = 'Agent: ChatGPT Codex' })
+vim.keymap.set('n', '<leader>aL', function() require('agentic').new_session { provider = 'opencode-acp' } end, { desc = 'Agent: New local session' })
+vim.keymap.set({ 'n', 'i' }, '<C-s>', function() require('agentic').stop_generation() end, { desc = 'Agent: Stop generation' })

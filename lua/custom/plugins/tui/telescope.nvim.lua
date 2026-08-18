@@ -90,7 +90,9 @@ return {
         end
       end
 
-      local toggle_find_files = make_toggleable(builtin.find_files)
+      local toggle_find_files = make_toggleable(function(opts)
+        builtin.find_files(require('telescope.themes').get_dropdown(opts))
+      end)
       local toggle_live_grep = make_toggleable(builtin.live_grep)
 
       -- Keymaps

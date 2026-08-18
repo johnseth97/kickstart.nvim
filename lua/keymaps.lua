@@ -32,3 +32,9 @@ require 'custom.keymaps.telescope-project-change'
 
 -- Bufferline navigation
 require 'custom.keymaps.bufferline'
+
+-- Agentic.nvim keymaps
+require 'custom.keymaps.agentic'
+
+-- zk-nvim keymaps
+require 'custom.keymaps.zk-nvim'

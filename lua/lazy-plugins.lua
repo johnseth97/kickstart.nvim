@@ -98,8 +98,9 @@ local lazy_config = {
     },
   },
   change_detection = {
-    enabled = true,
-    notify = true,
+    -- Lazy only reloads its plugin specification here; it cannot safely reset
+    -- already-running plugins or restore the current editing session.
+    enabled = false,
   },
   readme = {
     enabled = true,

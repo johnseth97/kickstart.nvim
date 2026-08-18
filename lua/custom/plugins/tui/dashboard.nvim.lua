@@ -37,6 +37,7 @@ return {
               }
             end,
           },
+
           {
             desc = '  dotfiles',
             group = 'Number',
@@ -71,6 +72,14 @@ return {
                 respect_gitignore = false,
                 grouped = true,
               }
+            end,
+          },
+          {
+            desc = '󰎞  Notes',
+            group = 'Label',
+            key = 'n',
+            action = function()
+              vim.cmd 'ZkNotes'
             end,
           },
         },

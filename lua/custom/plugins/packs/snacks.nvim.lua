@@ -10,6 +10,29 @@ return {
     dim = { enabled = true },
     scratch = { enabled = true },
     scope = { enabled = true },
+    -- Agentic delegates provider/model/session selectors to Snacks' vim.ui.select.
+    -- Keep its normal-mode list movement aligned with the j/k/l/; layout while
+    -- leaving insert-mode search text completely untouched.
+    picker = {
+      win = {
+        input = {
+          keys = {
+            ['j'] = false,
+            ['k'] = 'list_down',
+            ['l'] = 'list_up',
+            [';'] = false,
+          },
+        },
+        list = {
+          keys = {
+            ['j'] = false,
+            ['k'] = 'list_down',
+            ['l'] = 'list_up',
+            [';'] = false,
+          },
+        },
+      },
+    },
   },
   keys = {
     { -- snacks.profiler
