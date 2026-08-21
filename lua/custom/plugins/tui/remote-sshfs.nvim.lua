@@ -8,7 +8,7 @@ return {
       },
     },
     mounts = {
-      base_dir = vim.fn.stdpath 'data' .. '/remote-sshfs/mounts/',
+      base_dir = vim.fn.stdpath 'data' .. '/remote-sshfs-mounts/',
       unmount_on_exit = true,
     },
     handlers = {
