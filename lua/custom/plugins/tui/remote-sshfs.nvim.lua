@@ -23,16 +23,23 @@ return {
     {
       '<leader>rc',
       function()
-        require('telescope').extensions['remote-sshfs'].connections()
+        require('telescope').extensions['remote-sshfs'].connect()
       end,
       desc = '[r]emote [c]onnect',
+    },
+    {
+      '<leader>rf',
+      function()
+        require('telescope').extensions['remote-sshfs'].find_files()
+      end,
+      desc = '[r]emote [f]ind files',
     },
     {
       '<leader>re',
       function()
         require('telescope').extensions['remote-sshfs'].edit()
       end,
-      desc = '[r]emote [e]dit',
+      desc = '[r]emote [e]dit ssh config',
     },
   },
 }
