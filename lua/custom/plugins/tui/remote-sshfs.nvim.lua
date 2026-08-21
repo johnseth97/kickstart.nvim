@@ -5,6 +5,7 @@ return {
     connections = {
       ssh_configs = {
         '/mnt/c/Users/EthanJohnson/.ssh/config',
+        '~/.ssh/config',
       },
     },
     mounts = {
