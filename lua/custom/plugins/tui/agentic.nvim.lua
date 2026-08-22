@@ -75,6 +75,38 @@ return {
       -- Keep focus in the prompt after sending so follow-up turns are frictionless.
       move_cursor_to_chat_on_submit = false,
     },
+    hooks = {
+      -- Keep the in-editor notification, and use macOS only when Ghostty is
+      -- unfocused so the desktop banner is an off-screen attention signal.
+      -- ACP sends this only when an agent is blocked on an approval. The
+      -- notification persists until the agent's eventual completion replaces it.
+      on_request_permission = function(data)
+        local tool = data.request.toolCall
+        local label = tool.title or tool.kind or 'action'
+        require('custom.notifications').notify('Waiting for your approval: ' .. label, vim.log.levels.WARN, {
+          title = 'Agentic',
+          id = 'agentic-session-' .. data.session_key,
+          timeout = false,
+          native = true,
+          native_title = 'Agentic: approval needed',
+        })
+      end,
+      -- Fires for foreground and background sessions. Reusing the session id
+      -- clears a persistent approval notice and leaves a short final status.
+      on_response_complete = function(data)
+        require('custom.notifications').notify(
+          data.success and 'Agent finished responding' or 'Agent stopped with an error',
+          data.success and vim.log.levels.INFO or vim.log.levels.ERROR,
+          {
+            title = 'Agentic',
+            id = 'agentic-session-' .. data.session_key,
+            timeout = 5000,
+            native = true,
+            native_title = data.success and 'Agentic: response complete' or 'Agentic: error',
+          }
+        )
+      end,
+    },
     headers = {
       chat = chat_header,
       input = capsule_header 'input',

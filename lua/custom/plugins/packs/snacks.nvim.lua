@@ -10,6 +10,13 @@ return {
     dim = { enabled = true },
     scratch = { enabled = true },
     scope = { enabled = true },
+    -- Route vim.notify through Snacks so Agentic lifecycle hooks are visible
+    -- even while working in another split or tab.
+    notifier = {
+      enabled = true,
+      timeout = 5000,
+      style = 'fancy',
+    },
     -- Agentic delegates provider/model/session selectors to Snacks' vim.ui.select.
     -- Keep its normal-mode list movement aligned with the j/k/l/; layout while
     -- leaving insert-mode search text completely untouched.

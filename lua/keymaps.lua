@@ -17,6 +17,11 @@ require 'custom.keymaps.navigation'
 -- Reload the neovim config file
 vim.keymap.set('n', '<leader>sv', '<cmd>source $MYVIMRC<CR>', { desc = 'Reload the Neovim config file' })
 
+vim.api.nvim_create_user_command('Notifications', function()
+  Snacks.notifier.show_history()
+end, { desc = 'Show notification history', force = true })
+vim.keymap.set('n', '<leader>un', '<cmd>Notifications<CR>', { desc = '[U]I: [N]otification history' })
+
 -- Launch the dashboard
 vim.keymap.set('n', '<leader>da', function()
   vim.cmd 'Dashboard'
