@@ -116,8 +116,8 @@ return {
           vim.keymap.set(mode, keys, fn, { buffer = buf, desc = 'LSP: ' .. desc })
         end
 
-        map('gd', require('telescope.builtin').lsp_definitions, '[G]oto Definition')
-        map('gr', require('telescope.builtin').lsp_references, '[G]oto References')
+        map('gd', Snacks.picker.lsp_definitions, '[G]oto Definition')
+        map('gr', Snacks.picker.lsp_references, '[G]oto References')
         map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
         map('<leader>ca', vim.lsp.buf.code_action, '[C]ode Action')
       end,

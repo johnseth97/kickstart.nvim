@@ -28,12 +28,12 @@ vim.api.nvim_create_autocmd('VimEnter', {
       vim.fn.chdir(dir)
 
       vim.schedule(function()
-        require('telescope.builtin').find_files {
+        Snacks.picker.files {
           prompt_title = 'Find File in ' .. argv[1],
           cwd = dir, -- use the absolute dir you just chdir'd to
           hidden = true,
           follow = true,
-          no_ignore = true,
+          ignored = true,
         }
       end)
     end

@@ -2,7 +2,13 @@ return { -- Terminal Splits
   'akinsho/toggleterm.nvim',
   version = '*',
   keys = {
-    { '<leader>T', ':ToggleTerm<CR>', { silent = true }, desc = '[T]oggle terminal' },
+    {
+      '<leader>T',
+      function()
+        require('helpers.util').smart_toggle_term()
+      end,
+      desc = '[T]oggle terminal',
+    },
   },
   config = function()
     require('toggleterm').setup {

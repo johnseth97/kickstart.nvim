@@ -29,11 +29,11 @@ return {
             group = 'DiagnosticHint',
             key = 's',
             action = function()
-              require('telescope.builtin').find_files {
+              Snacks.picker.files {
                 prompt_title = 'Src Files',
                 cwd = vim.fn.expand '~',
                 hidden = true,
-                no_ignore = true,
+                ignored = true,
               }
             end,
           },
@@ -45,7 +45,7 @@ return {
             action = function()
               local tgt = vim.fn.expand '~/.dotfiles'
               vim.cmd('cd ' .. tgt)
-              require('telescope.builtin').find_files { cwd = tgt, hidden = true }
+              Snacks.picker.files { cwd = tgt, hidden = true }
             end,
           },
           {
@@ -55,10 +55,9 @@ return {
             action = function()
               local tgt = vim.fn.expand '~/.dotfiles/common/.config/nvim'
               vim.cmd('cd ' .. tgt)
-              require('telescope.builtin').find_files {
+              Snacks.picker.files {
                 cwd = tgt,
                 hidden = true,
-                respect_gitignore = true,
               }
             end,
           },
@@ -67,11 +66,7 @@ return {
             group = 'Label',
             key = 'p',
             action = function()
-              require('telescope').extensions.project.project {
-                hidden = true,
-                respect_gitignore = false,
-                grouped = true,
-              }
+              Snacks.picker.projects()
             end,
           },
           {
