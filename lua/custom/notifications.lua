@@ -30,24 +30,18 @@ local function write_ghostty_notification(title, message)
   -- OSC 9 is Ghostty's documented desktop-notification sequence. Send to the
   -- terminal directly so Neovim does not render the control bytes in a buffer.
   local sequence = '\27]9;' .. text .. '\27\\'
-  if vim.env.TMUX and vim.env.TMUX ~= '' then
-    -- Neovim has no usable controlling TTY in this setup. Ask tmux for the
-    -- attached client's actual TTY and write there, bypassing both tmux and
-    -- Neovim's UI. This also avoids requiring DCS passthrough for this route.
-    vim.system({ 'tmux', 'display-message', '-p', '#{client_tty}' }, { text = true }, function(result)
-      vim.schedule(function()
-        local tty_path = result.code == 0 and vim.trim(result.stdout) or ''
-        if tty_path:match '^/dev/tty' then
-          write_to_tty(tty_path, sequence)
-          return
-        end
 
-        -- Fall back to tmux DCS passthrough if no client TTY is available.
-        -- This needs `set -g allow-passthrough on` in tmux.
-        local wrapped = '\27Ptmux;' .. sequence:gsub('\27', '\27\27') .. '\27\\'
-        write_to_tty('/dev/tty', wrapped)
-      end)
-    end)
+  if vim.env.TMUX and vim.env.TMUX ~= '' then
+    -- Route through tmux's own DCS passthrough (`set -g allow-passthrough on`
+    -- in tmux.conf) rather than writing straight to the attached client's
+    -- tty. A direct write to the client tty races tmux's own writes to that
+    -- same physical terminal -- interleaved bytes there produced a corrupted
+    -- escape sequence that blanked the status line and even flipped the
+    -- terminal's background opacity, until a manual terminal reset. Writing
+    -- to /dev/tty (this pane's own pty) instead hands the bytes to tmux,
+    -- which serializes them into its own output stream safely.
+    local wrapped = '\27Ptmux;' .. sequence:gsub('\27', '\27\27') .. '\27\\'
+    write_to_tty('/dev/tty', wrapped)
     return
   end
 
