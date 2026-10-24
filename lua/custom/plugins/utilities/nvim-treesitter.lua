@@ -25,7 +25,6 @@ local languages = {
 
 return {
   'nvim-treesitter/nvim-treesitter',
-  dir = vim.fn.expand '~/src/forks/nvim-treesitter',
   branch = 'fix/topcoat-javascript',
   lazy = false,
   config = function()
