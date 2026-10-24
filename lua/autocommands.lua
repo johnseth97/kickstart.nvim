@@ -1,6 +1,16 @@
--- Highlight when yanking (copying) text
---  Try it with `yap` in normal mode
---  See `:help vim.highlight.on_yank()`
+-- Keep C sources and headers consistent while typing.
+vim.api.nvim_create_autocmd('FileType', {
+  group = vim.api.nvim_create_augroup('user-c-indentation', { clear = true }),
+  pattern = { 'c', 'cpp' },
+  callback = function()
+    vim.opt_local.expandtab = true
+    vim.opt_local.shiftwidth = 4
+    vim.opt_local.softtabstop = 4
+    vim.opt_local.tabstop = 4
+  end,
+})
+
+-- Highlight when yanking (copying) text. See `:help vim.highlight.on_yank()`.
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
@@ -11,14 +21,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 --
 -- Always switch to insert mode when opening a terminal buffer
 -- Hopefully this works
-vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter' }, {
-  pattern = { '*' },
-  callback = function()
-    if vim.opt.buftype:get() == 'terminal' then
-      vim.cmd ':startinsert'
-    end
-  end,
-})
+-- vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter' }, {
+--   pattern = { '*' },
+--   callback = function()
+--     if vim.opt.buftype:get() == 'terminal' then
+--       vim.cmd ':startinsert'
+--     end
+--   end,
+-- })
 
 vim.api.nvim_create_autocmd('VimEnter', {
   callback = function()

@@ -18,7 +18,34 @@ return {
     local std_cfg = vim.fn.stdpath 'config'
     local dotcfg = vim.fn.expand '~/.dotfiles/.config/nvim'
 
+    local tailwind_defaults = vim.lsp.config.tailwindcss
+    local tailwind_filetypes = vim.deepcopy(tailwind_defaults.filetypes)
+    table.insert(tailwind_filetypes, 'rust')
+
     local servers = {
+      tailwindcss = {
+        filetypes = tailwind_filetypes,
+        init_options = { userLanguages = { rust = 'html' } },
+        settings = {
+          tailwindCSS = { includeLanguages = { rust = 'html' } },
+        },
+        root_dir = function(bufnr, on_dir)
+          if vim.bo[bufnr].filetype == 'rust' then
+            local root = vim.fs.root(bufnr, 'Topcoat.toml')
+            if root then on_dir(root) end
+          else
+            tailwind_defaults.root_dir(bufnr, on_dir)
+          end
+        end,
+      },
+      rust_analyzer = {
+        settings = {
+          ['rust-analyzer'] = {
+            checkOnSave = true,
+            check = { command = 'clippy' },
+          },
+        },
+      },
       lua_ls = {
         settings = {
           Lua = {

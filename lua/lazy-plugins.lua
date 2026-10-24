@@ -19,6 +19,8 @@ local lazy_config = {
           vim.api.nvim_set_hl(0, 'LineNr', { fg = line_number })
           vim.api.nvim_set_hl(0, 'LineNrAbove', { fg = line_number })
           vim.api.nvim_set_hl(0, 'LineNrBelow', { fg = line_number })
+          -- Keep unused code readable; diagnostic underlines still mark it.
+          vim.api.nvim_set_hl(0, 'DiagnosticUnnecessary', { link = 'Comment' })
         end
         require('tokyonight').setup(opts)
         vim.cmd.colorscheme 'tokyonight'
@@ -56,6 +58,7 @@ local lazy_config = {
             'denols',
             'rust_analyzer',
             'clangd',
+            'clang-format',
             'pyright',
           },
         }

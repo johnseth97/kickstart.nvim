@@ -31,7 +31,8 @@ return {
             hide_workspace = true,
           },
           file_browser = {
-            hijack_netrw = true,
+            -- Directory startup is handled by the Snacks VimEnter autocmd.
+            hijack_netrw = false,
           },
         },
         defaults = {},
