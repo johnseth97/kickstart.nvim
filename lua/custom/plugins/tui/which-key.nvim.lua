@@ -13,7 +13,7 @@
 -- after the plugin has been loaded:
 --  config = function() ... end
 
-return { -- Useful plugin to show you pending keybinds.
+local spec = { -- Useful plugin to show you pending keybinds.
   'folke/which-key.nvim',
   event = 'VeryLazy', -- Sets the loading event to 'VimEnter'
   opts = {
@@ -65,3 +65,12 @@ return { -- Useful plugin to show you pending keybinds.
     },
   },
 }
+
+if vim.g.dotfiles_mail_mode then
+  spec.opts.spec = {
+    { '<leader>m', group = '[M]ail' },
+    { '<leader>s', group = '[S]earch' },
+    { '<leader>u', group = 'View options' },
+  }
+end
+return spec

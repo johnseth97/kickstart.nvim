@@ -1,24 +1,30 @@
 return {
   {
     'nvim-lualine/lualine.nvim',
+    cond = not vim.g.dotfiles_mail_mode,
     event = 'BufReadPost',
     opts = function(_, opts)
-      local capsule_theme = {
-        normal = {
-          a = { fg = '#1e2030', bg = '#7aa2f7', gui = 'bold' },
-          b = { fg = '#c0caf5', bg = '#3b4261' },
-          c = { fg = '#828bb8' },
-        },
-        insert = { a = { fg = '#1e2030', bg = '#9ece6a', gui = 'bold' } },
-        visual = { a = { fg = '#1e2030', bg = '#bb9af7', gui = 'bold' } },
-        replace = { a = { fg = '#1e2030', bg = '#f7768e', gui = 'bold' } },
-        command = { a = { fg = '#1e2030', bg = '#e0af68', gui = 'bold' } },
-        inactive = {
-          a = { fg = '#828bb8', bg = '#292e42' },
-          b = { fg = '#565f89', bg = '#292e42' },
-          c = { fg = '#565f89' },
-        },
-      }
+      -- A function, so lualine rebuilds it on every ColorScheme and the
+      -- capsules follow Omarchy theme switches.
+      local function capsule_theme()
+        local c = require('custom.omarchy_theme').colors()
+        return {
+          normal = {
+            a = { fg = c.bg_dark, bg = c.blue, gui = 'bold' },
+            b = { fg = c.fg, bg = c.fg_gutter },
+            c = { fg = c.fg_dark },
+          },
+          insert = { a = { fg = c.bg_dark, bg = c.green, gui = 'bold' } },
+          visual = { a = { fg = c.bg_dark, bg = c.magenta, gui = 'bold' } },
+          replace = { a = { fg = c.bg_dark, bg = c.red, gui = 'bold' } },
+          command = { a = { fg = c.bg_dark, bg = c.yellow, gui = 'bold' } },
+          inactive = {
+            a = { fg = c.fg_dark, bg = c.bg_highlight },
+            b = { fg = c.comment, bg = c.bg_highlight },
+            c = { fg = c.comment },
+          },
+        }
+      end
 
       local function custom_location()
         local line = tonumber(vim.fn.line '.') or 0

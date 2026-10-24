@@ -12,11 +12,7 @@ vim.keymap.set({ 'v', 'o' }, 'k', 'j', { noremap = true, desc = 'Move cursor dow
 vim.keymap.set({ 'v', 'o' }, 'l', 'k', { noremap = true, desc = 'Move cursor up' })
 vim.keymap.set({ 'v', 'o' }, ';', 'l', { noremap = true, desc = 'Move cursor right' })
 --
---Disable arrow keys in normal mode
-vim.keymap.set({ 'n', 'o' }, '<left>', '<cmd>echo "Use j to move!!"<CR>')
-vim.keymap.set({ 'n', 'o' }, '<right>', '<cmd>echo "Use ; to move!!"<CR>')
-vim.keymap.set({ 'n', 'o' }, '<up>', '<cmd>echo "Use l to move!!"<CR>')
-vim.keymap.set({ 'n', 'o' }, '<down>', '<cmd>echo "Use k to move!!"<CR>')
+-- Arrow keys retain Neovim's default behavior.
 --
 -- Remap split navigation
 -- Keep native <C-w>{direction} commands aligned with the jkl; layout too.
@@ -29,6 +25,10 @@ vim.keymap.set('n', '<C-w>J', '<C-w>H', { noremap = true, desc = 'Move split lef
 vim.keymap.set('n', '<C-w>K', '<C-w>J', { noremap = true, desc = 'Move split down' })
 vim.keymap.set('n', '<C-w>L', '<C-w>K', { noremap = true, desc = 'Move split up' })
 vim.keymap.set('n', '<C-w>:', '<C-w>L', { noremap = true, desc = 'Move split right' })
+
+if vim.g.dotfiles_mail_mode then
+  return
+end
 
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'DiffviewFiles', 'DiffviewFileHistory', 'DiffviewPanel', 'diff', 'NvimTree' },

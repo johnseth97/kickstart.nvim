@@ -15,16 +15,16 @@ local lazy_config = {
       },
       config = function(_, opts)
         local function apply_ui_contrast()
-          local line_number = '#737aa2'
+          vim.cmd.hi 'Comment gui=none'
+          local line_number = require('custom.omarchy_theme').colors().dark5
           vim.api.nvim_set_hl(0, 'LineNr', { fg = line_number })
           vim.api.nvim_set_hl(0, 'LineNrAbove', { fg = line_number })
           vim.api.nvim_set_hl(0, 'LineNrBelow', { fg = line_number })
           -- Keep unused code readable; diagnostic underlines still mark it.
           vim.api.nvim_set_hl(0, 'DiagnosticUnnecessary', { link = 'Comment' })
         end
-        require('tokyonight').setup(opts)
-        vim.cmd.colorscheme 'tokyonight'
-        vim.cmd.hi 'Comment gui=none'
+        -- Follows the Omarchy theme (live) when there is one; stock moon otherwise.
+        require('custom.omarchy_theme').setup(opts)
         apply_ui_contrast()
         vim.api.nvim_create_autocmd('ColorScheme', {
           group = vim.api.nvim_create_augroup('UserInterfaceContrast', { clear = true }),
@@ -152,5 +152,27 @@ local lazy_config = {
   pkg = nil, -- used for packager configs (optional)
   rocks = nil, -- for luarocks
 }
+
+if vim.g.dotfiles_mail_mode then
+  local allowed = {
+    ['lazy.nvim'] = true,
+    tokyonight = true,
+    ['snacks.nvim'] = true,
+    ['which-key.nvim'] = true,
+    ['himalaya.nvim'] = true,
+    ['nui.nvim'] = true,
+    ['mini.nvim'] = true,
+    ['nvim-autopairs'] = true,
+    ['nvim-cokeline'] = true,
+    ['nvim-web-devicons'] = true,
+  }
+  -- cond=false keeps excluded editor plugins installed in our shared Lazy root.
+  -- An independent minimal spec could make :Lazy sync remove those checkouts.
+  lazy_config.defaults.cond = function(plugin)
+    return allowed[plugin.name] == true
+  end
+  lazy_config.checker.enabled = false
+  lazy_config.local_spec = false
+end
 
 require('lazy').setup(lazy_config)

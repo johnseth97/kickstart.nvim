@@ -1,6 +1,7 @@
 return { -- Mini.nvim: Collection of various small independent plugins/modules
   'echasnovski/mini.nvim',
-  event = 'BufReadPost',
+  event = vim.g.dotfiles_mail_mode and 'InsertEnter' or 'BufReadPost',
+  ft = vim.g.dotfiles_mail_mode and 'mail' or nil,
   config = function()
     -- Better Around/Inside textobjects
     --
@@ -18,7 +19,9 @@ return { -- Mini.nvim: Collection of various small independent plugins/modules
     require('mini.surround').setup()
 
     -- Git integration for Neovim, :Git <command>
-    require('mini.git').setup()
+    if not vim.g.dotfiles_mail_mode then
+      require('mini.git').setup()
+    end
 
     -- ... and there is more!
     --  Check out: https://github.com/echasnovski/mini.nvim

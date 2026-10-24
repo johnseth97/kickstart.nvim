@@ -3,6 +3,7 @@ return {
   {
     'nvimdev/dashboard-nvim',
     event = 'VimEnter',
+    cond = vim.env.DOTFILES_MAIL ~= '1',
     dependencies = {
       'nvim-tree/nvim-web-devicons',
     },

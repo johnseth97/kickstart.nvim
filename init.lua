@@ -1,10 +1,13 @@
+-- Snapshot before the launcher flag is cleared from child environments.
+vim.g.dotfiles_mail_mode = vim.env.DOTFILES_MAIL == '1'
+
 -- Init.lua
 --
 -- Options
 --
 -- Snacks profiler hook, must load before as much of the config as possibe
 -- Otherwise, it won't be able to capture the events
-if vim.env.PROF then
+if vim.env.PROF and not vim.g.dotfiles_mail_mode then
   local snacks = vim.fn.stdpath 'data' .. '/lazy/snacks.nvim'
   vim.opt.rtp = vim.opt.rtp + snacks
 
@@ -46,18 +49,25 @@ require 'options'
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
-require 'keymaps'
+if vim.g.dotfiles_mail_mode then
+  require 'custom.mail_keymaps'
+else
+  require 'keymaps'
+end
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
-require 'autocommands'
+if not vim.g.dotfiles_mail_mode then
+  require 'autocommands'
+end
 
 -- [[ Custom User Commands ]]
 -- johnseth97
-require 'usercommands'
-
-require 'ftdetect.github-actions'
+if not vim.g.dotfiles_mail_mode then
+  require 'usercommands'
+  require 'ftdetect.github-actions'
+end
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info

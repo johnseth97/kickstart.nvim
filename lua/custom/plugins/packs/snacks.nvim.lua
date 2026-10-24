@@ -1,4 +1,4 @@
-return {
+local spec = {
   'folke/snacks.nvim',
   priority = 1000,
   lazy = false,
@@ -267,3 +267,22 @@ return {
     })
   end,
 }
+
+if vim.g.dotfiles_mail_mode then
+  for _, feature in ipairs { 'profiler', 'dim', 'scratch', 'statuscolumn', 'scroll', 'scope', 'explorer' } do
+    spec.opts[feature] = { enabled = false }
+  end
+  spec.opts.picker.sources = {}
+  spec.keys = {
+    {
+      '<leader>sk',
+      function()
+        Snacks.picker.keymaps()
+      end,
+      desc = '[S]earch [K]eymaps',
+    },
+  }
+  -- Skip coding toggles, scratch/profile bindings and debug globals.
+  spec.init = nil
+end
+return spec

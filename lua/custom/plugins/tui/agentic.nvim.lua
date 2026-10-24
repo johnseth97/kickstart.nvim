@@ -124,9 +124,10 @@ return {
     require('agentic').setup(opts)
 
     local function apply_capsule_theme()
-      vim.api.nvim_set_hl(0, 'AgenticTitle', { fg = '#c0caf5', bold = true })
-      vim.api.nvim_set_hl(0, 'AgenticCapsule', { fg = '#c0caf5', bg = '#3b4261', bold = true })
-      vim.api.nvim_set_hl(0, 'AgenticCapsuleEdge', { fg = '#3b4261' })
+      local c = require('custom.omarchy_theme').colors()
+      vim.api.nvim_set_hl(0, 'AgenticTitle', { fg = c.fg, bold = true })
+      vim.api.nvim_set_hl(0, 'AgenticCapsule', { fg = c.fg, bg = c.fg_gutter, bold = true })
+      vim.api.nvim_set_hl(0, 'AgenticCapsuleEdge', { fg = c.fg_gutter })
     end
 
     apply_capsule_theme()

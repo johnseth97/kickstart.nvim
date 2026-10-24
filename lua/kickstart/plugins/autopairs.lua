@@ -5,9 +5,12 @@ return {
   'windwp/nvim-autopairs',
   event = 'InsertEnter',
   -- Optional dependency
-  dependencies = { 'hrsh7th/nvim-cmp' },
+  dependencies = vim.g.dotfiles_mail_mode and {} or { 'hrsh7th/nvim-cmp' },
   config = function()
     require('nvim-autopairs').setup {}
+    if vim.g.dotfiles_mail_mode then
+      return
+    end
     -- If you want to automatically add `(` after selecting a function or method
     local cmp_autopairs = require 'nvim-autopairs.completion.cmp'
     local cmp = require 'cmp'
