@@ -22,6 +22,13 @@ vim.opt.laststatus = 3
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
 
+-- No dedicated command-line row: with laststatus=3, that reserved row sat
+-- blank below the statusline whenever no message/command was showing,
+-- reading as a bottom gap other full-screen terminal apps don't have.
+-- Messages/prompts render as a transient overlay instead; `:messages`
+-- still has anything that would otherwise flash by too fast to read.
+vim.opt.cmdheight = 0
+
 -- Enable 24 bit colors
 vim.opt.termguicolors = true
 
