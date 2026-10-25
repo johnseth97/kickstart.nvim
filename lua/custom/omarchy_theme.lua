@@ -19,6 +19,7 @@ local fallback = {
   fg_gutter = '#3b4261',
   green = '#9ece6a',
   magenta = '#bb9af7',
+  orange = '#ff9e64',
   red = '#f7768e',
   teal = '#4fd6be',
   yellow = '#e0af68',

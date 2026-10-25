@@ -9,17 +9,20 @@ return {
       local function capsule_theme()
         local c = require('custom.omarchy_theme').colors()
         return {
+          -- Same pills as the tmux bar: the mode/location (a/z) in the session
+          -- pill's colour, the info pills (b/y) in the directory pill's blue,
+          -- and the middle (c, and x which reuses it) in the bar's shade.
           normal = {
-            a = { fg = c.bg_dark, bg = c.blue, gui = 'bold' },
-            b = { fg = c.fg, bg = c.fg_gutter },
-            -- Fill the middle (c, and x which reuses it) with the section shade,
-            -- like the tmux status bar, instead of StatusLine's near-black.
+            a = { fg = c.bg_dark, bg = c.green, gui = 'bold' },
+            b = { fg = c.bg_dark, bg = c.blue },
             c = { fg = c.fg_dark, bg = c.fg_gutter },
           },
-          insert = { a = { fg = c.bg_dark, bg = c.green, gui = 'bold' } },
+          -- Green is now normal mode's, and blue the info pills', so insert and
+          -- command take yellow and orange to stay distinct.
+          insert = { a = { fg = c.bg_dark, bg = c.yellow, gui = 'bold' } },
           visual = { a = { fg = c.bg_dark, bg = c.magenta, gui = 'bold' } },
           replace = { a = { fg = c.bg_dark, bg = c.red, gui = 'bold' } },
-          command = { a = { fg = c.bg_dark, bg = c.yellow, gui = 'bold' } },
+          command = { a = { fg = c.bg_dark, bg = c.orange, gui = 'bold' } },
           inactive = {
             a = { fg = c.fg_dark, bg = c.bg_highlight },
             b = { fg = c.comment, bg = c.bg_highlight },
@@ -64,10 +67,12 @@ return {
 
       opts.sections = {
         lualine_a = { { 'mode', separator = { left = '' }, right_padding = 2 } },
-        lualine_b = { 'branch', 'diff', 'diagnostics' },
-        lualine_c = { 'filename', 'filesize' },
-        lualine_x = { 'encoding', require('codex').status(), require('easy-dotnet.ui-modules.jobs').lualine },
-        lualine_y = { 'progress' },
+        -- ( mode ) info ) on the left and ( info ( location ) on the right,
+        -- like the tmux bar's pills; plugin status sits on the bar between.
+        lualine_b = { 'branch', 'diff', 'diagnostics', 'filename', 'filesize' },
+        lualine_c = {},
+        lualine_x = { require('codex').status(), require('easy-dotnet.ui-modules.jobs').lualine },
+        lualine_y = { 'encoding', 'progress' },
         lualine_z = { { custom_location, separator = { right = '' }, left_padding = 2 } },
       }
 
