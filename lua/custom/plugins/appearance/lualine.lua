@@ -11,11 +11,11 @@ return {
         return {
           -- Same pills as the tmux bar: the mode/location (a/z) in the session
           -- pill's colour, the info pills (b/y) in the directory pill's blue,
-          -- and the middle (c, and x which reuses it) in the bar's shade.
+          -- and the middle (c, and x which reuses it) transparent.
           normal = {
             a = { fg = c.bg_dark, bg = c.green, gui = 'bold' },
             b = { fg = c.bg_dark, bg = c.blue },
-            c = { fg = c.fg_dark, bg = c.fg_gutter },
+            c = { fg = c.fg_dark, bg = 'NONE' },
           },
           -- Green is now normal mode's, and blue the info pills', so insert and
           -- command take yellow and orange to stay distinct.
@@ -26,7 +26,7 @@ return {
           inactive = {
             a = { fg = c.fg_dark, bg = c.bg_highlight },
             b = { fg = c.comment, bg = c.bg_highlight },
-            c = { fg = c.comment, bg = c.fg_gutter },
+            c = { fg = c.comment, bg = 'NONE' },
           },
         }
       end

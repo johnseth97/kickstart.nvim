@@ -1,10 +1,15 @@
--- Recolour tokyonight from the active Omarchy theme's colors.toml, and follow
--- `omarchy theme set` live in every running nvim. Off Omarchy (no colors.toml)
--- tokyonight keeps the configured stock style and nothing is watched.
+-- Read Omarchy or ~/.config/theme/colors.toml. Hosts can select the native
+-- Aether theme; the existing Tokyo Night palette still supplies UI capsules.
+-- Without either palette, keep the configured stock Tokyo Night style.
 local M = {}
 
 local state_dir = vim.fn.expand '~/.local/state/omarchy/current'
 local colors_toml = state_dir .. '/theme/colors.toml'
+local omarchy = vim.uv.fs_stat(colors_toml) ~= nil
+if not omarchy then
+  state_dir = (vim.env.XDG_CONFIG_HOME or vim.fn.expand '~/.config') .. '/theme'
+  colors_toml = state_dir .. '/colors.toml'
+end
 
 -- What the UI capsules (lualine, cokeline, agentic) were hand-tuned to before
 -- following Omarchy; still used verbatim on hosts without it.
@@ -51,6 +56,30 @@ local function read_colors_toml()
       end
     end
   end
+  -- Standalone palettes need the same ANSI-to-name mapping without an
+  -- Omarchy executable. Explicit names (and Omarchy's derived values) win.
+  local names = {
+    black = 0,
+    red = 1,
+    green = 2,
+    yellow = 3,
+    blue = 4,
+    magenta = 5,
+    cyan = 6,
+    white = 7,
+    bright_black = 8,
+    bright_red = 9,
+    bright_green = 10,
+    bright_yellow = 11,
+    bright_blue = 12,
+    bright_magenta = 13,
+    bright_cyan = 14,
+    bright_white = 15,
+    muted = 8,
+  }
+  for name, index in pairs(names) do
+    colors[name] = colors[name] or colors['color' .. index]
+  end
   return colors
 end
 
@@ -76,7 +105,7 @@ local function tokyonight_palette(c)
   local muted = pick 'muted' or blend(fg_dark, 0.3, bg)
   local comment = pick('dark_foreground', 'muted') or blend(fg_dark, 0.5, bg)
   local cyan = pick('cyan', 'bright_cyan', 'blue')
-  local bright_cyan = pick('bright_cyan', 'cyan', 'blue')
+  local bright_cyan = pick('syntax_cyan', 'bright_cyan', 'cyan', 'blue')
 
   return {
     bg = bg,
@@ -97,7 +126,7 @@ local function tokyonight_palette(c)
     dark3 = blend(comment, 0.7, muted),
     dark5 = blend(comment, 0.6, fg_dark),
     fg = fg,
-    fg_dark = fg_dark,
+    fg_dark = pick 'secondary_foreground' or fg_dark,
     -- Background lifted 15% toward the foreground, the way tokyonight gets
     -- #3b4261; lualine's sections and the tmux bar share this shade.
     fg_gutter = blend(fg_dark, 0.15, bg),
@@ -126,11 +155,44 @@ function M.colors()
   return current
 end
 
+function M.editor_theme()
+  local colors = read_colors_toml()
+  return colors and colors.neovim_theme or 'tokyonight'
+end
+
 ---@param opts tokyonight.Config
 function M.apply(opts)
   opts = vim.deepcopy(opts)
   local omarchy = read_colors_toml()
   local palette = omarchy and tokyonight_palette(omarchy)
+
+  if palette and omarchy.neovim_theme == 'aether' then
+    -- Use the author's actual syntax rules, not just their colours applied
+    -- to Tokyo Night's rules. Keep our capsule palette and transparency.
+    current = palette
+    require('aether').setup {
+      transparent = opts.transparent,
+      styles = opts.styles,
+      colors = {
+        bg = omarchy.background,
+        bg_dark = omarchy.background,
+        bg_highlight = omarchy.muted,
+        fg = omarchy.foreground,
+        fg_dark = omarchy.secondary_foreground or omarchy.white,
+        comment = omarchy.muted,
+        red = omarchy.red,
+        orange = omarchy.orange or omarchy.bright_red,
+        yellow = omarchy.yellow,
+        green = omarchy.green,
+        cyan = omarchy.syntax_cyan or omarchy.cyan,
+        blue = omarchy.blue,
+        purple = omarchy.magenta,
+        magenta = omarchy.bright_magenta,
+      },
+    }
+    vim.cmd.colorscheme 'aether'
+    return
+  end
 
   if palette then
     -- tokyonight only treats the style named "day" as light (it forces
@@ -167,13 +229,18 @@ local function watch(opts)
     return
   end
   handle:start(state_dir, {}, function(err, filename)
-    if err or (filename ~= 'theme.generation' and filename ~= 'theme.name') then
+    local changed = omarchy and (filename == 'theme.generation' or filename == 'theme.name') or (not omarchy and filename == 'colors.toml')
+    if err or not changed then
       return
     end
     timer:stop()
-    timer:start(150, 0, vim.schedule_wrap(function()
-      M.apply(opts)
-    end))
+    timer:start(
+      150,
+      0,
+      vim.schedule_wrap(function()
+        M.apply(opts)
+      end)
+    )
   end)
 end
 

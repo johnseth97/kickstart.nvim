@@ -12,6 +12,9 @@ local function capsule_fg(buffer)
 end
 
 local function apply_highlights()
+  -- A group with no background still inherits the tabline's base fill.
+  -- Clear that base too, so the gaps and rounded caps stay transparent.
+  vim.api.nvim_set_hl(0, 'TabLineFill', { bg = 'NONE' })
   vim.api.nvim_set_hl(0, 'CokelineFill', { bg = 'NONE' })
 end
 

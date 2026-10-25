@@ -9,6 +9,15 @@ local lazy_config = {
       name = 'tokyonight',
       priority = 1000,
       lazy = false,
+      dependencies = {
+        {
+          'bjarneo/aether.nvim',
+          branch = 'v2',
+          cond = function()
+            return require('custom.omarchy_theme').editor_theme() == 'aether'
+          end,
+        },
+      },
       opts = {
         style = 'moon',
         transparent = true,
@@ -33,7 +42,7 @@ local lazy_config = {
             vim.api.nvim_set_hl(0, group, hl)
           end
         end
-        -- Follows the Omarchy theme (live) when there is one; stock moon otherwise.
+        -- Follow Omarchy or the host's shared palette; stock moon otherwise.
         require('custom.omarchy_theme').setup(opts)
         apply_ui_contrast()
         vim.api.nvim_create_autocmd('ColorScheme', {
