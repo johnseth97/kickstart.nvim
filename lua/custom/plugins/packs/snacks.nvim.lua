@@ -15,6 +15,10 @@ local spec = {
     -- Directory startup remains an explicit file picker; the normal explorer
     -- keys below open Snacks' persistent sidebar.
     explorer = { enabled = true, replace_netrw = false },
+    -- Floats are see-through (tokyonight styles.floats); without this the
+    -- generic float style (terminal, scratch ...) dims everything behind it
+    -- with an opaque 60% backdrop. Picker layouts already disable theirs.
+    styles = { float = { backdrop = false } },
     -- Route vim.notify through Snacks so Agentic lifecycle hooks are visible
     -- even while working in another split or tab.
     notifier = {

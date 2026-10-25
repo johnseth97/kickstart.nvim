@@ -19,6 +19,10 @@ vim.opt.mouse = 'a'
 -- Span statusbar
 vim.opt.laststatus = 3
 
+-- Floats are transparent (tokyonight styles.floats), so give borderless ones
+-- such as LSP hover and diagnostics a border to stand apart from the code.
+vim.opt.winborder = 'rounded'
+
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
 

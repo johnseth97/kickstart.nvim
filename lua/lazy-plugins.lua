@@ -12,6 +12,9 @@ local lazy_config = {
       opts = {
         style = 'moon',
         transparent = true,
+        -- transparent only clears the editor; floats (Snacks pickers, the
+        -- explorer, popups) and sidebars keep their own fill unless told.
+        styles = { floats = 'transparent', sidebars = 'transparent' },
       },
       config = function(_, opts)
         local function apply_ui_contrast()
