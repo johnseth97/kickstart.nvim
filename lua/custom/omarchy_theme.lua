@@ -39,6 +39,17 @@ local function read_colors_toml()
     end
   end
   file:close()
+  -- Many themes define only color0-15/accent; omarchy-theme-color maps those
+  -- onto the named slots (blue, magenta, muted ...) used below, as the tmux
+  -- and Starship palettes do. Explicit names in colors.toml win.
+  if vim.fn.executable 'omarchy-theme-color' == 1 then
+    for _, line in ipairs(vim.fn.systemlist { 'omarchy-theme-color', '--file', colors_toml, '--all' }) do
+      local key, value = line:match '^([%w_]+)\t(#%x%x%x%x%x%x)$'
+      if key and colors[key] == nil then
+        colors[key] = value
+      end
+    end
+  end
   return colors
 end
 
@@ -70,7 +81,9 @@ local function tokyonight_palette(c)
     bg = bg,
     bg_dark = pick 'dark_background' or blend(bg, 0.8, '#000000'),
     bg_dark1 = pick('darker_background', 'dark_background') or blend(bg, 0.6, '#000000'),
-    bg_highlight = pick('selection', 'lighter_background') or blend(fg, 0.1, bg),
+    -- A subtle lift (cursor line, inactive buffer tabs), not the theme's
+    -- selection, which is often a bright accent.
+    bg_highlight = (c.lighter_background ~= bg and c.lighter_background) or blend(fg, 0.1, bg),
     blue = blue,
     blue0 = blend(blue, 0.45, bg),
     blue1 = bright_cyan,
@@ -84,7 +97,9 @@ local function tokyonight_palette(c)
     dark5 = blend(comment, 0.6, fg_dark),
     fg = fg,
     fg_dark = fg_dark,
-    fg_gutter = muted,
+    -- Background lifted 15% toward the foreground, the way tokyonight gets
+    -- #3b4261; lualine's sections and the tmux bar share this shade.
+    fg_gutter = blend(fg_dark, 0.15, bg),
     green = green,
     green1 = blend(green, 0.5, bright_cyan),
     green2 = cyan,
