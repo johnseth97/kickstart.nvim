@@ -12,7 +12,9 @@ return {
           normal = {
             a = { fg = c.bg_dark, bg = c.blue, gui = 'bold' },
             b = { fg = c.fg, bg = c.fg_gutter },
-            c = { fg = c.fg_dark },
+            -- Fill the middle (c, and x which reuses it) with the section shade,
+            -- like the tmux status bar, instead of StatusLine's near-black.
+            c = { fg = c.fg_dark, bg = c.fg_gutter },
           },
           insert = { a = { fg = c.bg_dark, bg = c.green, gui = 'bold' } },
           visual = { a = { fg = c.bg_dark, bg = c.magenta, gui = 'bold' } },
@@ -21,7 +23,7 @@ return {
           inactive = {
             a = { fg = c.fg_dark, bg = c.bg_highlight },
             b = { fg = c.comment, bg = c.bg_highlight },
-            c = { fg = c.comment },
+            c = { fg = c.comment, bg = c.fg_gutter },
           },
         }
       end

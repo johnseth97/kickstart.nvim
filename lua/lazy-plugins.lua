@@ -25,6 +25,13 @@ local lazy_config = {
           vim.api.nvim_set_hl(0, 'LineNrBelow', { fg = line_number })
           -- Keep unused code readable; diagnostic underlines still mark it.
           vim.api.nvim_set_hl(0, 'DiagnosticUnnecessary', { link = 'Comment' })
+          -- lualine's rounded outer ends sit on StatusLine; keep it see-through
+          -- so they meet the terminal background, as the tmux bar's do.
+          for _, group in ipairs { 'StatusLine', 'StatusLineNC' } do
+            local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
+            hl.bg = nil
+            vim.api.nvim_set_hl(0, group, hl)
+          end
         end
         -- Follows the Omarchy theme (live) when there is one; stock moon otherwise.
         require('custom.omarchy_theme').setup(opts)
