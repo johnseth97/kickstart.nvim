@@ -66,23 +66,25 @@ return {
       }
 
       opts.sections = {
-        lualine_a = { { 'mode', separator = { left = '' }, right_padding = 2 } },
+        lualine_a = { { 'mode', separator = { left = '', right = '' }, right_padding = 2 } },
         -- ( mode ) info ) on the left and ( info ( location ) on the right,
         -- like the tmux bar's pills; plugin status sits on the bar between.
+        -- A component's separator option replaces both of its sides, so the
+        -- mode and location name their inner joins as well as their outer ends.
         lualine_b = { 'branch', 'diff', 'diagnostics', 'filename', 'filesize' },
         lualine_c = {},
         lualine_x = { require('codex').status(), require('easy-dotnet.ui-modules.jobs').lualine },
         lualine_y = { 'encoding', 'progress' },
-        lualine_z = { { custom_location, separator = { right = '' }, left_padding = 2 } },
+        lualine_z = { { custom_location, separator = { left = '', right = '' }, left_padding = 2 } },
       }
 
       opts.inactive_sections = {
-        lualine_a = { { 'filename', separator = { left = '' }, right_padding = 2 } },
+        lualine_a = { { 'filename', separator = { left = '', right = '' }, right_padding = 2 } },
         lualine_b = {},
         lualine_c = {},
         lualine_x = {},
         lualine_y = {},
-        lualine_z = { { custom_location, separator = { right = '' }, left_padding = 2 } },
+        lualine_z = { { custom_location, separator = { left = '', right = '' }, left_padding = 2 } },
       }
 
       opts.tabline = opts.tabline or {}
