@@ -31,6 +31,21 @@ local spec = {
     -- leaving insert-mode search text completely untouched.
     picker = {
       sources = {
+        -- The explorer source ships its own list keys (l = confirm,
+        -- h = close dir) that override picker.win below; remap them onto the
+        -- j/k/l/; layout: l moves up, ; opens/expands, j collapses.
+        explorer = {
+          win = {
+            list = {
+              keys = {
+                ['j'] = 'explorer_close',
+                ['k'] = 'list_down',
+                ['l'] = 'list_up',
+                [';'] = 'confirm',
+              },
+            },
+          },
+        },
         projects = {
           dev = { '~/src' },
           projects = {
