@@ -21,12 +21,6 @@ local function available_providers()
   return providers
 end
 
-local function destroy(session)
-  if session and session.session_key then
-    require('agentic.session_registry').destroy(session.session_key)
-  end
-end
-
 local function align_options_navigation()
   local buffer = vim.api.nvim_get_current_buf()
   local down = vim.fn.maparg('j', 'n', false, true).callback
@@ -84,21 +78,20 @@ function M.restore()
       return
     end
 
-    local SessionRegistry = require 'agentic.session_registry'
-    local session = SessionRegistry.create(provider.id)
-    if not session then
+    -- List against the chosen provider's agent directly. Creating a session
+    -- just to borrow its agent would leave an empty one behind on every
+    -- cancelled pick, and the restore below builds its own.
+    local agent = require('agentic.acp.agent_instance').get_instance(provider.id)
+    if not agent then
+      vim.notify('Could not start ' .. provider.name, vim.log.levels.WARN)
       return
     end
 
-    session.agent:when_ready(function()
-      session.agent:list_sessions(vim.fn.getcwd(), function(result, err)
+    agent:when_ready(function()
+      agent:list_sessions(vim.fn.getcwd(), function(result, err)
         vim.schedule(function()
           if err or not result then
-            vim.notify(
-              'Failed to list ' .. provider.name .. ' history: ' .. (err and err.message or 'unknown error'),
-              vim.log.levels.WARN
-            )
-            destroy(session)
+            vim.notify('Failed to list ' .. provider.name .. ' history: ' .. (err and err.message or 'unknown error'), vim.log.levels.WARN)
             return
           end
 
@@ -113,7 +106,12 @@ function M.restore()
 
           if #items == 0 then
             vim.notify('No saved ' .. provider.name .. ' conversations found', vim.log.levels.INFO)
-            destroy(session)
+            return
+          end
+
+          local capabilities = agent.agent_capabilities
+          if not capabilities or not capabilities.loadSession then
+            vim.notify(provider.name .. ' does not support loading sessions', vim.log.levels.WARN)
             return
           end
 
@@ -123,14 +121,19 @@ function M.restore()
               return item.display
             end,
           }, function(choice)
-            if choice then
-              require('agentic.session_restore').restore_by_id(session, choice.session_id)
-            else
-              destroy(session)
+            if not choice then
+              return
             end
+
+            -- `restore_by_id` resolves its own context from the *current*
+            -- session, which is not this provider, so go through `replace`
+            -- with an explicit agent to land in the provider that was picked.
+            require('agentic.session_registry').replace(nil, provider.id, { kind = 'load', session_id = choice.session_id }, { agent = agent })
           end)
         end)
       end)
+    end, function(ready_err)
+      vim.notify('Could not reach ' .. provider.name .. ': ' .. (ready_err and ready_err.message or 'provider unavailable'), vim.log.levels.WARN)
     end)
   end)
 end

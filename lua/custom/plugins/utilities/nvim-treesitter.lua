@@ -25,13 +25,14 @@ local languages = {
 
 return {
   'nvim-treesitter/nvim-treesitter',
-  branch = 'fix/topcoat-javascript',
+  -- The repo's default branch is still the legacy `master`; this config uses
+  -- the rewritten `main` API (setup/install), so the branch has to be pinned.
+  branch = 'main',
   lazy = false,
+  build = ':TSUpdate',
   config = function()
     local treesitter = require 'nvim-treesitter'
     treesitter.setup()
-    -- Read queries from the local checkout without relinking installed queries.
-    vim.opt.rtp:prepend(vim.fn.expand '~/src/forks/nvim-treesitter/runtime')
     treesitter.install(languages)
 
     vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufNewFile', 'BufWinEnter', 'FileType' }, {
@@ -55,11 +56,7 @@ return {
           return
         end
 
-        local has_parser = pcall(function()
-          if not require('custom.topcoat_treesitter').start(args.buf) then
-            vim.treesitter.start(args.buf)
-          end
-        end)
+        local has_parser = pcall(vim.treesitter.start, args.buf)
         if has_parser and vim.bo[args.buf].filetype ~= 'ruby' then
           vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
         end
